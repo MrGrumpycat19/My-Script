@@ -1,0 +1,860 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "📜 Universal Script 📜",
+   LoadingTitle = "🌐 Universal GUI",
+   LoadingSubtitle = "By Brain-Studios",
+   ConfigurationSaving = {
+      Enabled = false,
+          FolderName = nil, -- Create a custom folder for your hub/game
+      FileName = "Universal GUI"
+   },
+   Discord = {
+      Enabled = false,
+      Invite = "noinvitelink", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ABCD would be ABCD
+      RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+   },
+   KeySystem = false, -- Set this to true to use our key system
+   KeySettings = {
+      Title = "Untitled",
+      Subtitle = "Key System",
+      Note = "No method of obtaining the key is provided",
+      FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+      SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+      GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+      Key = {"Hello"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+   }
+})
+
+local MainTab = Window:CreateTab("Main", 12388249566) -- Title, Image
+local MainSection = MainTab:CreateSection("Charactar Scripts")
+
+local Paragraph = MainTab:CreateParagraph({Title = "READ ME", Content = "This is a BETA script. If there are any bugs or errors then DM thegrumpyfishy on Discord. Also this script may not work in every game."})
+
+local Slider = MainTab:CreateSlider({
+   Name = "WalkSpeed",
+   Range = {1, 1000},
+   Increment = 1,
+   Suffix = "Speed",
+   CurrentValue = game.Players.LocalPlayer.Character.Humanoid.WalkSpeed,
+   Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)  
+            while true do  
+        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = (Value)
+                    wait()
+    end
+   end,
+})
+local Slider = MainTab:CreateSlider({
+   Name = "JumpPower",
+   Range = {1, 1000},
+   Increment = 1,
+   Suffix = "Power",
+   CurrentValue = game.Players.LocalPlayer.Character.Humanoid.JumpPower,
+   Flag = "Slider2", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+            while true do
+   game.Players.LocalPlayer.Character.Humanoid.JumpPower = (Value)
+                wait()
+            end
+   end,
+})
+local Slider = MainTab:CreateSlider({
+   Name = "Gravity",
+   Range = {0, 1000},
+   Increment = 1,
+   Suffix = "Gravity",
+   CurrentValue = workspace.Gravity,
+   Flag = "Slider3", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+         workspace.Gravity = (Value)
+   end,
+})
+local Slider = MainTab:CreateSlider({
+   Name = "Hip Height",
+   Range = {1, 2048},
+   Increment = 1,
+   Suffix = "Height",
+   CurrentValue = game.Players.LocalPlayer.Character.Humanoid.HipHeight,
+   Flag = "Slider4", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+        game.Players.LocalPlayer.Character.Humanoid.HipHeight = (Value)
+   end,
+})
+local Slider = MainTab:CreateSlider({
+   Name = "Field Of View",
+   Range = {1, 120},
+   Increment = 1,
+   Suffix = "FOV",
+   CurrentValue = workspace.Camera.FieldOfView,
+   Flag = "Slider5", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+        workspace.Camera.FieldOfView = Value
+   end,
+})
+
+
+local Toggle = MainTab:CreateToggle({
+   Name = "Infinite Jump",
+   CurrentValue = false,
+   Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(infjmp)
+_G.infjmp = not _G.infjmp
+            if _G.infjmpStarted == nil then
+	--Ensures this only runs once to save resources
+	_G.infjmpStarted = true
+            
+game:GetService("UserInputService").jumpRequest:Connect(function()
+     if _G.infjmp then
+        game:GetService"Players".LocalPlayer.Character:FindFirstChildOfClass"Humanoid":ChangeState("Jumping")
+    end
+end)
+            end
+   end,
+})
+local Toggle = MainTab:CreateToggle({
+   Name = "Noclip",
+   CurrentValue = false,
+   Flag = "Toggle4", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(noclip)
+if noclip then
+    local Players, Player = game:GetService("Players"), game:GetService("Players").LocalPlayer
+    getgenv().Noclip = true
+    getgenv().NoPlatform = false
+    getgenv().CanCollide = true
+
+    if setfflag then
+        setfflag("HumanoidParallelRemoveNoPhysics", "False")
+        setfflag("HumanoidParallelRemoveNoPhysicsNoSimulate2", "False")
+    end
+
+    game:GetService("RunService").Stepped:Connect(
+        function()
+            if getgenv().Noclip then
+                for i, v in pairs(Player.Character:GetChildren()) do
+                    if v:IsA("BasePart") and getgenv().CanCollide then
+                        v.CanCollide = false
+                    elseif v:IsA("Humanoid") and getgenv().NoPlatform then
+                        v:ChangeState(11)
+                    end
+                end
+            end
+        end
+    )
+else
+    -- Reversed logic
+    local Players, Player = game:GetService("Players"), game:GetService("Players").LocalPlayer
+    getgenv().Noclip = false
+    getgenv().NoPlatform = true
+    getgenv().CanCollide = false
+
+    if setfflag then
+        setfflag("HumanoidParallelRemoveNoPhysics", "True")
+        setfflag("HumanoidParallelRemoveNoPhysicsNoSimulate2", "True")
+    end
+
+    game:GetService("RunService").Stepped:Connect(
+        function()
+            if not getgenv().Noclip then
+                for i, v in pairs(Player.Character:GetChildren()) do
+                    if v:IsA("BasePart") and not getgenv().CanCollide then
+                        v.CanCollide = true
+                    elseif v:IsA("Humanoid") and not getgenv().NoPlatform then
+                        -- Add logic here if needed
+                    end
+                end
+            end
+        end
+    )
+end
+
+        end,
+})
+local Toggle = MainTab:CreateToggle({
+   Name = "Invisible",
+   CurrentValue = false,
+   Flag = "Toggle5", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Invisible)
+if Invisible then
+-- Script to turn player invisible upon running
+
+local function InvisibleScript()
+    local Transparency = true
+    local NoClip = true
+
+    local Player = game:GetService("Players").LocalPlayer
+    local RealCharacter = Player.Character or Player.CharacterAdded:Wait()
+
+    local IsInvisible = false
+
+    RealCharacter.Archivable = true
+    local FakeCharacter = RealCharacter:Clone()
+    local Part
+    Part = Instance.new("Part", workspace)
+    Part.Anchored = true
+    Part.Size = Vector3.new(200, 1, 200)
+    Part.CFrame = CFrame.new(0, -500, 0)
+    Part.CanCollide = true
+    FakeCharacter.Parent = workspace
+    FakeCharacter.HumanoidRootPart.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
+
+    for i, v in pairs(RealCharacter:GetChildren()) do
+        if v:IsA("LocalScript") then
+            local clone = v:Clone()
+            clone.Disabled = true
+            clone.Parent = FakeCharacter
+        end
+    end
+    if Transparency then
+        for i, v in pairs(FakeCharacter:GetDescendants()) do
+            if v:IsA("BasePart") then
+                v.Transparency = 0.7
+            end
+        end
+    end
+
+    local CanInvis = true
+    function RealCharacterDied()
+        CanInvis = false
+        RealCharacter:Destroy()
+        RealCharacter = Player.Character
+        CanInvis = true
+        IsInvisible = false
+        FakeCharacter:Destroy()
+        workspace.CurrentCamera.CameraSubject = RealCharacter.Humanoid
+
+        RealCharacter.Archivable = true
+        FakeCharacter = RealCharacter:Clone()
+        Part:Destroy()
+        Part = Instance.new("Part", workspace)
+        Part.Anchored = true
+        Part.Size = Vector3.new(200, 1, 200)
+        Part.CFrame = CFrame.new(9999, 9999, 9999)
+        Part.CanCollide = true
+        FakeCharacter.Parent = workspace
+        FakeCharacter.HumanoidRootPart.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
+
+        for i, v in pairs(RealCharacter:GetChildren()) do
+            if v:IsA("LocalScript") then
+                local clone = v:Clone()
+                clone.Disabled = true
+                clone.Parent = FakeCharacter
+            end
+        end
+        if Transparency then
+            for i, v in pairs(FakeCharacter:GetDescendants()) do
+                if v:IsA("BasePart") then
+                    v.Transparency = 0.5
+                end
+            end
+        end
+        RealCharacter.Humanoid.Died:Connect(function()
+            RealCharacter:Destroy()
+            FakeCharacter:Destroy()
+        end)
+        Player.CharacterAppearanceLoaded:Connect(RealCharacterDied)
+    end
+    RealCharacter.Humanoid.Died:Connect(function()
+        RealCharacter:Destroy()
+        FakeCharacter:Destroy()
+    end)
+    Player.CharacterAppearanceLoaded:Connect(RealCharacterDied)
+    local PseudoAnchor
+    game:GetService("RunService").RenderStepped:Connect(
+        function()
+            if PseudoAnchor ~= nil then
+                PseudoAnchor.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
+            end
+            if NoClip then
+                FakeCharacter.Humanoid:ChangeState(11)
+            end
+        end
+    )
+
+    PseudoAnchor = FakeCharacter.HumanoidRootPart
+    local function Invisible()
+        if IsInvisible == false then
+            local StoredCF = RealCharacter.HumanoidRootPart.CFrame
+            RealCharacter.HumanoidRootPart.CFrame = FakeCharacter.HumanoidRootPart.CFrame
+            FakeCharacter.HumanoidRootPart.CFrame = StoredCF
+            RealCharacter.Humanoid:UnequipTools()
+            Player.Character = FakeCharacter
+            workspace.CurrentCamera.CameraSubject = FakeCharacter.Humanoid
+            PseudoAnchor = RealCharacter.HumanoidRootPart
+            for i, v in pairs(FakeCharacter:GetChildren()) do
+                if v:IsA("LocalScript") then
+                    v.Disabled = false
+                end
+            end
+
+            IsInvisible = true
+        else
+            local StoredCF = FakeCharacter.HumanoidRootPart.CFrame
+            FakeCharacter.HumanoidRootPart.CFrame = RealCharacter.HumanoidRootPart.CFrame
+
+            RealCharacter.HumanoidRootPart.CFrame = StoredCF
+
+            FakeCharacter.Humanoid:UnequipTools()
+            Player.Character = RealCharacter
+            workspace.CurrentCamera.CameraSubject = RealCharacter.Humanoid
+            PseudoAnchor = FakeCharacter.HumanoidRootPart
+            for i, v in pairs(FakeCharacter:GetChildren()) do
+                if v:IsA("LocalScript") then
+                    v.Disabled = true
+                end
+            end
+            IsInvisible = false
+        end
+    end
+
+    -- Call the Invisible function to turn the player invisible immediately
+    Invisible()
+
+end
+
+coroutine.wrap(InvisibleScript)()
+                
+else
+    -- Reversed logic
+    local Transparency = true
+    local NoClip = true
+    local Player = game:GetService("Players").LocalPlayer
+    local RealCharacter = Player.Character or Player.CharacterAdded:Wait()
+
+    local IsInvisible = true
+
+    RealCharacter.Archivable = true
+    local FakeCharacter = RealCharacter:Clone()
+    local Part
+    Part = Instance.new("Part", workspace)
+    Part.Anchored = true
+    Part.Size = Vector3.new(200, 1, 200)
+    Part.CFrame = CFrame.new(0, -500, 0)
+    Part.CanCollide = true
+    FakeCharacter.Parent = workspace
+    FakeCharacter.HumanoidRootPart.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
+
+    for i, v in pairs(RealCharacter:GetChildren()) do
+        if v:IsA("LocalScript") then
+            local clone = v:Clone()
+            clone.Disabled = true
+            clone.Parent = FakeCharacter
+        end
+    end
+
+    if Transparency then
+        for i, v in pairs(FakeCharacter:GetDescendants()) do
+            if v:IsA("BasePart") then
+                v.Transparency = 0
+            end
+        end
+    end
+
+    local function RealCharacterDied()
+        RealCharacter:Destroy()
+        RealCharacter = Player.Character
+        FakeCharacter:Destroy()
+        workspace.CurrentCamera.CameraSubject = RealCharacter.Humanoid
+
+        RealCharacter.Archivable = true
+        FakeCharacter = RealCharacter:Clone()
+        Part:Destroy()
+        Part = Instance.new("Part", workspace)
+        Part.Anchored = true
+        Part.Size = Vector3.new(200, 1, 200)
+        Part.CFrame = CFrame.new(9999, 9999, 9999)
+        Part.CanCollide = true
+        FakeCharacter.Parent = workspace
+        FakeCharacter.HumanoidRootPart.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
+
+        for i, v in pairs(RealCharacter:GetChildren()) do
+            if v:IsA("LocalScript") then
+                local clone = v:Clone()
+                clone.Disabled = true
+                clone.Parent = FakeCharacter
+            end
+        end
+
+        if Transparency then
+            for i, v in pairs(FakeCharacter:GetDescendants()) do
+                if v:IsA("BasePart") then
+                    v.Transparency = 0
+
+                end
+            end
+        end
+    end
+
+    RealCharacter.Humanoid.Died:Connect(function()
+        RealCharacter:Destroy()
+        FakeCharacter:Destroy()
+    end)
+
+    Player.CharacterAppearanceLoaded:Connect(RealCharacterDied)
+
+    local PseudoAnchor
+    game:GetService("RunService").RenderStepped:Connect(function()
+        if PseudoAnchor then
+            PseudoAnchor.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
+        end
+
+        if NoClip then
+            FakeCharacter.Humanoid:ChangeState(11)
+        end
+    end)
+
+    local function ToggleInvisibility()
+        if IsInvisible then
+            local StoredCF = RealCharacter.HumanoidRootPart.CFrame
+            RealCharacter.HumanoidRootPart.CFrame = FakeCharacter.HumanoidRootPart.CFrame
+            FakeCharacter.HumanoidRootPart.CFrame = StoredCF
+            RealCharacter.Humanoid:UnequipTools()
+            Player.Character = FakeCharacter
+            workspace.CurrentCamera.CameraSubject = FakeCharacter.Humanoid
+            PseudoAnchor = RealCharacter.HumanoidRootPart
+
+            for _, v in pairs(FakeCharacter:GetChildren()) do
+                if v:IsA("LocalScript") then
+                    v.Disabled = false
+                end
+            end
+
+            IsInvisible = false
+        end
+    end
+
+    ToggleInvisibility()
+end
+
+   end,
+})
+local Toggle = MainTab:CreateToggle({
+   Name = "Walk On Walls",
+   CurrentValue = false,
+   Flag = "Toggle2", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(WalkOnWallsStarted)
+        if _G.WalkOnWallsStarted == nil then
+  _G.WalkOnWallsStarted = true
+  local mouse = game:GetService("Players").LocalPlayer:GetMouse()
+
+  repeat wait() until mouse
+
+        loadstring(game:HttpGet("https://pastebin.com/raw/zXk4Rq2r"))()
+end
+   end,
+})
+
+local Button = MainTab:CreateButton({
+   Name = "Fly GUI",
+   Callback = function()
+        loadstring(game:HttpGet("https://pastebin.com/raw/V2RQf7HC"))()
+   end,
+})
+
+local MiscTab = Window:CreateTab("Misc", 13692792090) -- Title, Image
+local MiscSection = MiscTab:CreateSection("Other Scripts")
+
+local Toggle = MiscTab:CreateToggle({
+   Name = "Anti AFK",
+   CurrentValue = true,
+   Flag = "Toggle3", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(AntiAFK)
+if AntiAFK then
+local vu = game:GetService("VirtualUser")
+game:GetService("Players").LocalPlayer.Idled:connect(function()
+vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+wait(1)
+vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+end)
+        else
+-- Declare idledConnection outside so it's accessible in both functions
+local idledConnection
+
+-- Function to start the anti-idle behavior
+local function startAntiIdle()
+    local vu = game:GetService("VirtualUser")
+    idledConnection = game:GetService("Players").LocalPlayer.Idled:connect(function()
+        vu:Button2Down(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+        wait(1)
+        vu:Button2Up(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+    end)
+end
+
+-- Function to stop the anti-idle behavior
+local function stopAntiIdle()
+    if idledConnection then
+        idledConnection:Disconnect()
+        idledConnection = nil
+    end
+end
+
+-- The main conditional logic to toggle anti-AFK
+if AntiAFK then
+    startAntiIdle()
+else
+    stopAntiIdle()
+            end
+        end
+   end,
+})
+
+local Toggle = MiscTab:CreateToggle({
+   Name = "Teleport GUI",
+   CurrentValue = false,
+   Flag = "Toggle6", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(TeleportGUI)
+        if TeleportGUI then
+                --//TELEPORT GUI CODE HERE!
+            else
+                screenGui:Destroy()
+            end
+   end,
+})
+
+local Button = MiscTab:CreateButton({
+   Name = "Follow Player GUI",
+   Callback = function()
+-- Create ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "FollowPlayerGUI"
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+-- Create Frame
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 250, 1, 0)
+frame.Position = UDim2.new(1, -250, 0, 0)
+frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Dark gray color
+frame.BorderSizePixel = 0
+frame.Parent = screenGui
+
+-- Create Title
+local title = Instance.new("TextLabel")
+title.Text = "Follow Player GUI"
+title.Size = UDim2.new(1, 0, 0, 30)
+title.Position = UDim2.new(0, 0, 0, 0)
+title.TextSize = 18
+title.BackgroundTransparency = 0
+title.BackgroundColor3 = Color3.fromRGB(70, 70, 70) -- Dark gray color
+title.BorderSizePixel = 0
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Font = Enum.Font.SourceSansBold
+title.TextScaled = true  -- Make the text bold
+title.Parent = frame
+
+-- Create Player List Title
+local playerListTitle = Instance.new("TextLabel")
+playerListTitle.Text = "Player List"
+playerListTitle.Size = UDim2.new(1, 0, 0, 30)
+playerListTitle.Position = UDim2.new(0, 0, 0, 30)
+playerListTitle.TextSize = 18
+playerListTitle.BackgroundTransparency = 0
+playerListTitle.BackgroundColor3 = Color3.fromRGB(70, 70, 70) -- Dark gray color
+playerListTitle.BorderSizePixel = 0
+playerListTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+playerListTitle.Font = Enum.Font.SourceSans
+playerListTitle.Parent = frame
+
+-- Create ScrollFrame
+local scrollFrame = Instance.new("ScrollingFrame")
+scrollFrame.Size = UDim2.new(1, 0, 1, -60)
+scrollFrame.Position = UDim2.new(0, 0, 0, 60)
+scrollFrame.BackgroundTransparency = 1
+scrollFrame.BorderSizePixel = 0
+scrollFrame.ScrollBarThickness = 8
+scrollFrame.Parent = frame
+
+-- Function to update player list
+local function updatePlayerList()
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        local button = Instance.new("TextButton")
+        button.Text = player.Name
+        button.Size = UDim2.new(1, -10, 0, 30)
+        button.Position = UDim2.new(0, 5, 0, ((button.Size.Y.Offset + 5) * (#scrollFrame:GetChildren() - 1)))
+        button.TextSize = 18
+        button.BackgroundColor3 = Color3.fromRGB(70, 70, 70) -- Dark gray color
+        button.BorderSizePixel = 0
+        button.TextColor3 = Color3.fromRGB(255, 255, 255)
+        button.Font = Enum.Font.SourceSans
+        button.Parent = scrollFrame
+
+        -- Button click event to set the target player
+        button.MouseButton1Click:Connect(function()
+            _G.MagnetizeToTarget = player.Name
+        end)
+    end
+end
+
+-- Update player list initially
+updatePlayerList()
+
+-- Update player list whenever a player joins or leaves
+game.Players.PlayerAdded:Connect(updatePlayerList)
+game.Players.PlayerRemoving:Connect(updatePlayerList)
+
+-- Original script
+game:GetService('RunService').Stepped:Connect(function()
+    for _, v in pairs(game:GetService("Players").LocalPlayer.Character:GetChildren()) do
+        if v:IsA("BasePart") then 
+            v.CanCollide = false
+        end
+    end
+end)
+
+local b = Instance.new("RocketPropulsion")
+b.Parent = game:GetService("Players").LocalPlayer.Character.HumanoidRootPart
+b.TurnP = 20000
+b.MaxThrust = 20000
+b.MaxSpeed = 1000
+b.ThrustP = 13000
+   end,
+        })
+local Button = MiscTab:CreateButton({
+   Name = "Bring GUI",
+   Callback = function()
+-- Services
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+-- LocalPlayer
+local LocalPlayer = Players.LocalPlayer
+
+-- GUI
+local gui = Instance.new("ScreenGui")
+gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+gui.Name = randomString()
+
+local frame = Instance.new("Frame")
+frame.AnchorPoint = Vector2.new(0.5, 0.5)
+frame.BackgroundColor3 = Color3.new(0.129412, 0.129412, 0.129412)
+frame.BorderColor3 = Color3.new(0, 0, 0)
+frame.BorderSizePixel = 0
+frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+frame.Size = UDim2.new(0, 250, 0, 140)
+frame.Name = randomString()
+frame.Parent = gui
+
+local label = Instance.new("TextLabel")
+label.Font = Enum.Font.SourceSans
+label.FontSize = Enum.FontSize.Size24
+label.Text = "Bring GUI"
+label.TextColor3 = Color3.new(0.815686, 0.815686, 0.815686)
+label.TextSize = 20
+label.BackgroundColor3 = Color3.new(1, 1, 1)
+label.BackgroundTransparency = 1
+label.BorderColor3 = Color3.new(0, 0, 0)
+label.BorderSizePixel = 0
+label.Size = UDim2.new(1, 0, 0, 25)
+label.Name = randomString()
+label.Parent = frame
+
+local container = Instance.new("Frame")
+container.BackgroundColor3 = Color3.new(0.192157, 0.192157, 0.192157)
+container.BorderColor3 = Color3.new(0, 0, 0)
+container.BorderSizePixel = 0
+container.ClipsDescendants = true
+container.Position = UDim2.new(0, 5, 0, 25)
+container.Size = UDim2.new(1, -10, 1, -30)
+container.Name = randomString()
+container.Parent = frame
+
+local textBox = Instance.new("TextBox")
+textBox.CursorPosition = -1
+textBox.Font = Enum.Font.SourceSans
+textBox.FontSize = Enum.FontSize.Size24
+textBox.PlaceholderColor3 = Color3.new(0.509804, 0.509804, 0.509804)
+textBox.PlaceholderText = "BRING"
+textBox.Text = ""
+textBox.TextColor3 = Color3.new(0.952941, 0.952941, 0.952941)
+textBox.TextSize = 20
+textBox.TextWrap = true
+textBox.AnchorPoint = Vector2.new(0.5, 0)
+textBox.BackgroundColor3 = Color3.new(0.266667, 0.266667, 0.266667)
+textBox.BorderColor3 = Color3.new(0, 0, 0)
+textBox.BorderSizePixel = 0
+textBox.ClipsDescendants = true
+textBox.Position = UDim2.new(0.5, 0, 0, 13)
+textBox.Size = UDim2.new(1, -30, 0, 32)
+textBox.Name = randomString()
+textBox.Parent = container
+
+local button = Instance.new("TextButton")
+button.Font = Enum.Font.FredokaOne
+button.FontSize = Enum.FontSize.Size24
+button.Text = "BRING BY AVTOR SCRIPTS"
+button.TextColor3 = Color3.new(0.55, 0.55, 0.55)
+button.TextSize = 23
+button.BackgroundColor3 = Color3.new(0.266667, 0.266667, 0.266667)
+button.BorderColor3 = Color3.new(0, 0, 0)
+button.BorderSizePixel = 0
+button.Position = UDim2.new(0.5, 0, 0, 64)
+button.Size = UDim2.new(1, -30, 0, 32)
+button.Name = randomString()
+button.Parent = container
+
+local label2 = Instance.new("TextLabel")
+label2.Font = Enum.Font.SourceSans
+label2.FontSize = Enum.FontSize.Size14
+label2.Text = "by MyWorld"
+label2.TextColor3 = Color3.new(0.635294, 0.635294, 0.635294)
+label2.AutomaticSize = Enum.AutomaticSize.XY
+label2.BackgroundColor3 = Color3.new(1, 1, 1)
+label2.BackgroundTransparency = 1
+label2.BorderColor3 = Color3.new(0, 0, 0)
+label2.BorderSizePixel = 0
+label2.Position = UDim2.new(1, 0, 1, 0)
+label2.Name = randomString()
+label2.Parent = container
+
+local label3 = Instance.new("TextLabel")
+label3.Font = Enum.Font.SourceSans
+label3.FontSize = Enum.FontSize.Size14
+label3.Text = ""
+label3.TextColor3 = Color3.new(0.635294, 0.635294, 0.635294)
+label3.AutomaticSize = Enum.AutomaticSize.XY
+label3.BackgroundColor3 = Color3.new(1, 1, 1)
+label3.BackgroundTransparency = 1
+label3.BorderColor3 = Color3.new(0, 0, 0)
+label3.BorderSizePixel = 0
+label3.Position = UDim2.new(0.5, 0, 0, 47)
+label3.Name = randomString()
+label3.Parent = container
+
+-- Draggable
+local function Draggable(window, obj)
+    local MB1enum = Enum.UserInputType.MouseButton1
+    local TOUCHenum = Enum.UserInputType.Touch
+    obj = obj or window
+    local activeEntered = 0
+    local mouseStart = nil
+    local dragStart = nil
+    local inputbegancon = nil
+    local rendersteppedcon = nil
+    local inputendedcon = nil
+
+    local function inputendedf(a)
+        a = a.UserInputType
+        if (a == MB1enum) or (a == TOUCHenum) then
+            rendersteppedcon:Disconnect()
+            inputendedcon:Disconnect()
+        end
+    end
+
+    local function rendersteppedf()
+        local off = UserInputService:GetMouseLocation() - mouseStart
+        window.Position = dragStart + UDim2.new(0, off.X, 0, off.Y)
+    end
+
+    local function inputbeganf(a)
+        a = a.UserInputType
+        if ((a == MB1enum) or (a == TOUCHenum)) and (activeEntered == 0) and not UserInputService:GetFocusedTextBox() then
+            mouseStart = UserInputService:GetMouseLocation()
+            dragStart = window.Position
+            if rendersteppedcon then rendersteppedcon:Disconnect() end
+            rendersteppedcon = RunService.RenderStepped:Connect(rendersteppedf)
+            if inputendedcon then inputendedcon:Disconnect() end
+            inputendedcon = UserInputService.InputEnded:Connect(inputendedf)
+        end
+    end
+
+    obj.MouseEnter:Connect(function()
+        if inputbegancon then inputbegancon:Disconnect() end
+        inputbegancon = UserInputService.InputBegan:Connect(inputbeganf)
+    end)
+
+    obj.MouseLeave:Connect(function()
+        inputbegancon:Disconnect()
+    end)
+
+    local function ondes(d)
+        if d:IsA("GuiObject") then
+            local thisEntered = false
+            local thisAdded = false
+            local con0 = d.MouseEnter:Connect(function()
+                thisEntered = true
+                if (not thisAdded) and d.Active then
+                    activeEntered = activeEntered + 1
+                    thisAdded = true
+                end
+            end)
+            local con1 = d.MouseLeave:Connect(function()
+                thisEntered = false
+                if thisAdded then
+                    activeEntered = activeEntered - 1
+                    thisAdded = false
+                end
+            end)
+            local con2 = d:GetPropertyChangedSignal("Active"):Connect(function()
+                if thisEntered then
+                    if thisAdded and not d.Active then
+                        activeEntered = activeEntered - 1
+                        thisAdded = false
+                    elseif d.Active and not thisAdded then
+                        activeEntered = activeEntered + 1
+                        thisAdded = true
+                    end
+                end
+            end)
+                end
+            end
+        end
+   end,
+})
+local Button = MiscTab:CreateButton({
+   Name = "Unnamed ESP",
+   Callback = function()
+        pcall(function() loadstring(game:HttpGet('https://raw.githubusercontent.com/ic3w0lf22/Unnamed-ESP/master/UnnamedESP.lua'))() end)
+   end,
+})
+local Button = MiscTab:CreateButton({
+   Name = "Infinite Yield",
+   Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+   end,
+})
+local Button = MiscTab:CreateButton({
+   Name = "Dark Dex",
+   Callback = function()
+         loadstring(game:HttpGet("https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/Universal/BypassedDarkDexV3.lua", true))()
+   end,
+})
+local Button = MiscTab:CreateButton({
+   Name = "Simple Spy",
+   Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/78n/SimpleSpy/main/SimpleSpySource.lua"))()
+   end,
+})
+
+
+        local HubsTab = Window:CreateTab("Hubs", 17465911567) -- Title, Image
+        local HubsSection = HubsTab:CreateSection("Script Hubs")
+
+        local Button = HubsTab:CreateButton({
+   Name = "Owl Hub",
+   Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/CriShoux/OwlHub/master/OwlHub.txt"))();
+    end,
+})
+        local Button = HubsTab:CreateButton({
+   Name = "idk",
+   Callback = function()
+
+    end,
+})
+        local Button = HubsTab:CreateButton({
+   Name = "idk",
+   Callback = function()
+
+        end,
+})
+
+
+Rayfield:Notify({
+   Title = "Script Successful Loaded!",
+   Content = "Enjoy the script :)",
+   Duration = 15,
+   Image = 17451871582,
+   Actions = { -- Notification Buttons
+},
+})
