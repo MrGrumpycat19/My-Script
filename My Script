@@ -1,24 +1,36 @@
+repeat task.wait() until game:IsLoaded()
+
+local Script_Loaded = false
+
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "📜 Universal Script 📜",
-   LoadingTitle = "🌐 Universal GUI",
-   LoadingSubtitle = "By Brain-Studios",
+   Name = "🌐 Universal Script",
+   Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
+   LoadingTitle = "📜 Universal Script 📜",
+   LoadingSubtitle = "by  Brain-Studios",
+   Theme = "Default", -- Check https://docs.sirius.menu/rayfield/configuration/themes
+
+   DisableRayfieldPrompts = false,
+   DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
+
    ConfigurationSaving = {
       Enabled = false,
-          FolderName = nil, -- Create a custom folder for your hub/game
-      FileName = "Universal GUI"
+      FolderName = nil, -- Create a custom folder for your hub/game
+      FileName = "Big Hub"
    },
+
    Discord = {
-      Enabled = false,
-      Invite = "noinvitelink", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ABCD would be ABCD
+      Enabled = false, -- Prompt the user to join your Discord server if their executor supports it
+      Invite = "noinvitelink", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ ABCD would be ABCD
       RememberJoins = true -- Set this to false to make them join the discord every time they load it up
    },
+
    KeySystem = false, -- Set this to true to use our key system
    KeySettings = {
       Title = "Untitled",
       Subtitle = "Key System",
-      Note = "No method of obtaining the key is provided",
+      Note = "No method of obtaining the key is provided", -- Use this to tell the user how to get a key
       FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
       SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
       GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
@@ -26,835 +38,2030 @@ local Window = Rayfield:CreateWindow({
    }
 })
 
-local MainTab = Window:CreateTab("Main", 12388249566) -- Title, Image
-local MainSection = MainTab:CreateSection("Charactar Scripts")
+loadstring(game:HttpGet("https://raw.githubusercontent.com/GalacticHypernova/Guardian/main/MainProd"))()
 
-local Paragraph = MainTab:CreateParagraph({Title = "READ ME", Content = "This is a BETA script. If there are any bugs or errors then DM thegrumpyfishy on Discord. Also this script may not work in every game."})
+-- Table to store the configuration
+local config = {
+	ConfigFileName = ""
+}
 
-local Slider = MainTab:CreateSlider({
-   Name = "WalkSpeed",
-   Range = {1, 1000},
-   Increment = 1,
-   Suffix = "Speed",
-   CurrentValue = game.Players.LocalPlayer.Character.Humanoid.WalkSpeed,
-   Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-   Callback = function(Value)  
-            while true do  
-        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = (Value)
-                    wait()
+local configOptions = {}
+
+IYMouse = Players.LocalPlayer:GetMouse()
+PlayerGui = Players.LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
+UserInputService = cloneref(game:GetService("UserInputService"))
+TweenService = cloneref(game:GetService("TweenService"))
+HttpService = cloneref(game:GetService("HttpService"))
+MarketplaceService = cloneref(game:GetService("MarketplaceService"))
+RunService = cloneref(game:GetService("RunService"))
+TeleportService = cloneref(game:GetService("TeleportService"))
+StarterGui = cloneref(game:GetService("StarterGui"))
+GuiService = cloneref(game:GetService("GuiService"))
+Lighting = cloneref(game:GetService("Lighting"))
+ContextActionService = cloneref(game:GetService("ContextActionService"))
+ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage"))
+GroupService = cloneref(game:GetService("GroupService"))
+PathService = cloneref(game:GetService("PathfindingService"))
+SoundService = cloneref(game:GetService("SoundService"))
+Teams = cloneref(game:GetService("Teams"))
+StarterPlayer = cloneref(game:GetService("StarterPlayer"))
+InsertService = cloneref(game:GetService("InsertService"))
+ChatService = cloneref(game:GetService("Chat"))
+ProximityPromptService = cloneref(game:GetService("ProximityPromptService"))
+StatsService = cloneref(game:GetService("Stats"))
+MaterialService = cloneref(game:GetService("MaterialService"))
+AvatarEditorService = cloneref(game:GetService("AvatarEditorService"))
+TextChatService = cloneref(game:GetService("TextChatService"))
+CaptureService = cloneref(game:GetService("CaptureService"))
+VoiceChatService = cloneref(game:GetService("VoiceChatService"))
+
+local Functions = {
+	Gravity = false,
+	HipHeight = false,
+	WalkSpeed = false,
+	JumpPower = false,
+	FieldOfView = false,
+	InfiniteZoom = false,
+	WalkSpeed_Amn = nil,
+	JumpPower_Amn = nil,
+	Gravity_Amn = nil,
+	HipHeight_Amn = nil,
+	FieldOfView_Amn = nil
+}
+
+local function EnableFunctions()
+    if Script_Loaded == true then
+	    Functions["Gravity"] = false
+	    Functions["HipHeight"] = false
+	    Functions["WalkSpeed"] = false
+	    Functions["JumpPower"] = false
+	    Functions["FieldOfView"] = false
+        Functions["InfiniteZoom"] = false
     end
-   end,
+end
+
+local RunServiceStepped
+RunServiceStepped = game:GetService("RunService").Stepped:connect(function()
+        
+	if Functions["Gravity"] == true then
+		workspace.Gravity = Functions["Gravity_Amn"]
+	end
+
+	if Functions["HipHeight"] == true then
+		local player = game.Players.LocalPlayer
+		local character = player.Character
+		local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+
+		if humanoid then
+			humanoid.HipHeight = Functions["HipHeight_Amn"]
+		end
+
+	end
+    
+	if Functions["WalkSpeed"] == true then
+if hookmetamethod then
+    local char = speaker.Character
+    local setspeed = Functions["WalkSpeed_Amn"]
+    local index; index = hookmetamethod(game, "__index", function(self, key)
+        local keyclean = key:gsub("\0", "")
+        if (keyclean == "WalkSpeed" or keyclean == "walkSpeed") and self:IsA("Humanoid") and self:IsDescendantOf(char) and not checkcaller() then
+            return setspeed
+        end
+        return index(self, key)
+    end)
+
+    local newindex; newindex = hookmetamethod(game, "__newindex", function(self, key, value)
+        local keyclean = string.gsub(key, "\0", "")
+        if (keyclean == "WalkSpeed" or keyclean == "walkSpeed") and self:IsA("Humanoid") and self:IsDescendantOf(char) and not checkcaller() then
+            setspeed = Value -- always enforce Value
+            return setspeed
+        end
+        return newindex(self, key, value)
+    end)
+else
+    notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
+end
+	end
+
+	if Functions["JumpPower"] == true then
+        if hookmetamethod then
+    local char = speaker.Character
+    local setpower = Functions["JumpPower_Amn"]
+    local index; index = hookmetamethod(game, "__index", function(self, key)
+        local keyclean = key:gsub("\0", "")
+        if (keyclean == "JumpPower" or keyclean == "jumpPower") and self:IsA("Humanoid") and self:IsDescendantOf(char) and not checkcaller() then
+            return setpower
+        end
+        return index(self, key)
+    end)
+    
+    local newindex; newindex = hookmetamethod(game, "__newindex", function(self, key, value)
+        local keyclean = string.gsub(key, "\0", "")
+        if (keyclean == "JumpPower" or keyclean == "jumpPower") and self:IsA("Humanoid") and self:IsDescendantOf(char) and not checkcaller() then
+            setpower = Value -- always enforce the defined Value
+            return setpower
+        end
+        return newindex(self, key, value)
+    end)
+else
+    notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
+end
+    end
+
+	if Functions["FieldOfView"] == true then
+		local tweenService = game:GetService("TweenService")
+		local camera = game.Workspace.CurrentCamera
+		local tween = tweenService:Create(camera, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), { FieldOfView = Functions["FieldOfView_Amn"] })
+		tween:Play()
+
+	end
+
+	if Functions["InfiniteZoom"] == true then
+		-- File path: StarterPlayerScripts/InfiniteZoomOut.lua
+
+		-- Get the player's camera
+		local player = game.Players.LocalPlayer
+
+		-- Function to set the camera zoom distance
+		local function setCameraZoom()
+			player.CameraMaxZoomDistance = math.huge
+		end
+
+		-- Set initial camera zoom distance
+		setCameraZoom()
+
+		-- Monitor and set the camera properties periodically
+		game:GetService("RunService").RenderStepped:Connect(setCameraZoom)
+	else
+		-- File path: StarterPlayerScripts/ResetZoom.lua
+
+		-- Get the player's camera
+		local player = game.Players.LocalPlayer
+
+		-- Function to reset the camera zoom distance
+		local function resetCameraZoom()
+			player.CameraMaxZoomDistance = 400  -- Default max zoom distance in Roblox is 400
+		end
+
+		-- Reset camera zoom distance
+		resetCameraZoom()
+
+	end
+end)
+
+local MainTab = Window:CreateTab("Main", 12388249566) -- Title, Image
+local MainSection = MainTab:CreateSection("Main Scripts")
+
+local Paragraph = MainTab:CreateParagraph({Title = "READ ME", Content = "This is a BETA script. If you encounter any bugs or have suggestions, please DM thegrumpyfishy on Discord. Note: This script may not be compatible with all games."})
+
+local Slider = MainTab:CreateSlider({
+	Name = "WalkSpeed",
+	Range = {1, 1000},
+	Increment = 1,
+	Suffix = "Speed",
+	CurrentValue = game.Players.LocalPlayer.Character.Humanoid.WalkSpeed,
+	Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)  
+		Functions["WalkSpeed_Amn"] = Value
+		Functions["WalkSpeed"] = true
+	end,
 })
 local Slider = MainTab:CreateSlider({
-   Name = "JumpPower",
-   Range = {1, 1000},
-   Increment = 1,
-   Suffix = "Power",
-   CurrentValue = game.Players.LocalPlayer.Character.Humanoid.JumpPower,
-   Flag = "Slider2", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-   Callback = function(Value)
-            while true do
-   game.Players.LocalPlayer.Character.Humanoid.JumpPower = (Value)
-                wait()
-            end
-   end,
+	Name = "JumpPower",
+	Range = {1, 1000},
+	Increment = 1,
+	Suffix = "Power",
+	CurrentValue = game.Players.LocalPlayer.Character.Humanoid.JumpPower,
+	Flag = "Slider2", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Functions["JumpPower_Amn"] = Value
+		Functions["JumpPower"] = true
+	end,
 })
 local Slider = MainTab:CreateSlider({
-   Name = "Gravity",
-   Range = {0, 1000},
-   Increment = 1,
-   Suffix = "Gravity",
-   CurrentValue = workspace.Gravity,
-   Flag = "Slider3", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-   Callback = function(Value)
-         workspace.Gravity = (Value)
-   end,
+	Name = "Gravity",
+	Range = {0, 1000},
+	Increment = 1,
+	Suffix = "Gravity",
+	CurrentValue = workspace.Gravity,
+	Flag = "Slider3", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Functions["Gravity_Amn"] = Value
+		Functions["Gravity"] = true
+	end,
 })
 local Slider = MainTab:CreateSlider({
-   Name = "Hip Height",
-   Range = {1, 2048},
-   Increment = 1,
-   Suffix = "Height",
-   CurrentValue = game.Players.LocalPlayer.Character.Humanoid.HipHeight,
-   Flag = "Slider4", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-   Callback = function(Value)
-        game.Players.LocalPlayer.Character.Humanoid.HipHeight = (Value)
-   end,
+	Name = "Hip Height",
+	Range = {1, 2048},
+	Increment = 1,
+	Suffix = "Height",
+	CurrentValue = game.Players.LocalPlayer.Character.Humanoid.HipHeight,
+	Flag = "Slider4", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Functions["HipHeight_Amn"] = Value
+		Functions["HipHeight"] = true
+	end,
 })
 local Slider = MainTab:CreateSlider({
-   Name = "Field Of View",
-   Range = {1, 120},
-   Increment = 1,
-   Suffix = "FOV",
-   CurrentValue = workspace.Camera.FieldOfView,
-   Flag = "Slider5", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-   Callback = function(Value)
-        workspace.Camera.FieldOfView = Value
-   end,
+	Name = "Field Of View",
+	Range = {1, 120},
+	Increment = 1,
+	Suffix = "FOV",
+	CurrentValue = workspace.Camera.FieldOfView,
+	Flag = "Slider5", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Functions["FieldOfView_Amn"] = Value
+		Functions["FieldOfView"] = true
+	end,
 })
 
 
 local Toggle = MainTab:CreateToggle({
-   Name = "Infinite Jump",
-   CurrentValue = false,
-   Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-   Callback = function(infjmp)
-_G.infjmp = not _G.infjmp
-            if _G.infjmpStarted == nil then
-	--Ensures this only runs once to save resources
-	_G.infjmpStarted = true
+	Name = "Infinite Jump",
+	CurrentValue = false,
+	Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+    local infJump = Value
+	if infJump then infJump:Disconnect() end
+	local infJumpDebounce = false
+	infJump = UserInputService.JumpRequest:Connect(function()
+		if not infJumpDebounce then
+			infJumpDebounce = true
+			speaker.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
+			wait()
+			infJumpDebounce = false
+		end
+	end)
+	end,
+})
+local Toggle = MainTab:CreateToggle({
+	Name = "Infinite Zoom",
+	CurrentValue = false,
+	Flag = "Toggle8", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(enabled)
+		if enabled == true then
+			Functions["InfiniteZoom"] = true
+		elseif enabled == false then
+			Functions["InfiniteZoom"] = false
+		end
+	end,
+})
+
+local Toggle = MainTab:CreateToggle({
+	Name = "Noclip",
+	CurrentValue = false,
+	Flag = "Toggle4", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(ValueEnabled)
+local Noclipping = nil
+if ValueEnabled == true then
+	Clip = false
+	wait(0.1)
+	local function NoclipLoop()
+		if Clip == false and speaker.Character ~= nil then
+			for _, child in pairs(speaker.Character:GetDescendants()) do
+				if child:IsA("BasePart") and child.CanCollide == true and child.Name ~= floatName then
+					child.CanCollide = false
+				end
+			end
+		end
+	end
+	Noclipping = RunService.Stepped:Connect(NoclipLoop)
+else
+    if Noclipping then
+		Noclipping:Disconnect()
+	end
+	Clip = true
+end
+	end,
+})
+
+local Toggle = MainTab:CreateToggle({
+	Name = "Invisible",
+	CurrentValue = false,
+	Flag = "Toggle5", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(invisRunning)
+	if invisRunning then return end
+	invisRunning = true
+	permadeath(speaker)
+	-- Full credit to AmokahFox @V3rmillion
+	local Player = speaker
+	repeat wait(.1) until Player.Character
+	local Character = Player.Character
+	Character.Archivable = true
+	local IsInvis = false
+	local IsRunning = true
+	local InvisibleCharacter = Character:Clone()
+	InvisibleCharacter.Parent = Lighting
+	local Void = workspace.FallenPartsDestroyHeight
+	InvisibleCharacter.Name = ""
+	local CF
+
+	local invisFix = RunService.Stepped:Connect(function()
+		pcall(function()
+			local IsInteger
+			if tostring(Void):find'-' then
+				IsInteger = true
+			else
+				IsInteger = false
+			end
+			local Pos = Player.Character.HumanoidRootPart.Position
+			local Pos_String = tostring(Pos)
+			local Pos_Seperate = Pos_String:split(', ')
+			local X = tonumber(Pos_Seperate[1])
+			local Y = tonumber(Pos_Seperate[2])
+			local Z = tonumber(Pos_Seperate[3])
+			if IsInteger == true then
+				if Y <= Void then
+					Respawn()
+				end
+			elseif IsInteger == false then
+				if Y >= Void then
+					Respawn()
+				end
+			end
+		end)
+	end)
+
+	for i,v in pairs(InvisibleCharacter:GetDescendants())do
+		if v:IsA("BasePart") then
+			if v.Name == "HumanoidRootPart" then
+				v.Transparency = 1
+			else
+				v.Transparency = .5
+			end
+		end
+	end
+
+	function Respawn()
+		IsRunning = false
+		if IsInvis == true then
+			pcall(function()
+				Player.Character = Character
+				wait()
+				Character.Parent = workspace
+				Character:FindFirstChildWhichIsA'Humanoid':Destroy()
+				IsInvis = false
+				InvisibleCharacter.Parent = nil
+				invisRunning = false
+			end)
+		elseif IsInvis == false then
+			pcall(function()
+				Player.Character = Character
+				wait()
+				Character.Parent = workspace
+				Character:FindFirstChildWhichIsA'Humanoid':Destroy()
+				TurnVisible()
+			end)
+		end
+	end
+
+	local invisDied
+	invisDied = InvisibleCharacter:FindFirstChildOfClass'Humanoid'.Died:Connect(function()
+		Respawn()
+		invisDied:Disconnect()
+	end)
+
+	if IsInvis == true then return end
+	IsInvis = true
+	CF = workspace.CurrentCamera.CFrame
+	local CF_1 = Player.Character.HumanoidRootPart.CFrame
+	Character:MoveTo(Vector3.new(0,math.pi*1000000,0))
+	workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
+	wait(.2)
+	workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
+	InvisibleCharacter = InvisibleCharacter
+	Character.Parent = Lighting
+	InvisibleCharacter.Parent = workspace
+	InvisibleCharacter.HumanoidRootPart.CFrame = CF_1
+	Player.Character = InvisibleCharacter
+	execCmd('fixcam')
+	Player.Character.Animate.Disabled = true
+	Player.Character.Animate.Disabled = false
+
+	function TurnVisible()
+		if IsInvis == false then return end
+		invisFix:Disconnect()
+		invisDied:Disconnect()
+		CF = workspace.CurrentCamera.CFrame
+		Character = Character
+		local CF_1 = Player.Character.HumanoidRootPart.CFrame
+		Character.HumanoidRootPart.CFrame = CF_1
+		InvisibleCharacter:Destroy()
+		Player.Character = Character
+		Character.Parent = workspace
+		IsInvis = false
+		Player.Character.Animate.Disabled = true
+		Player.Character.Animate.Disabled = false
+		invisDied = Character:FindFirstChildOfClass'Humanoid'.Died:Connect(function()
+			Respawn()
+			invisDied:Disconnect()
+		end)
+		invisRunning = false
+	end
+	end,
+})
+local Toggle = MainTab:CreateToggle({
+	Name = "Teleport GUI",
+	CurrentValue = false,
+	Flag = "Toggle6", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function()
+local player = game.Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Check if the GUI already exists
+local screenGui = playerGui:FindFirstChild("TeleportGUI") or game.CoreGui:FindFirstChild("TeleportGUI")
             
-game:GetService("UserInputService").jumpRequest:Connect(function()
-     if _G.infjmp then
-        game:GetService"Players".LocalPlayer.Character:FindFirstChildOfClass"Humanoid":ChangeState("Jumping")
+if not screenGui then
+    -- Create the ScreenGui
+    screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "TeleportGUI"
+    screenGui.ResetOnSpawn = false -- Make the GUI persistent
+    screenGui.Parent = game.CoreGui
+
+    -- Create the main frame
+    local mainFrame = Instance.new("Frame")
+    mainFrame.Name = "MainFrame"
+    mainFrame.Size = UDim2.new(0, 400, 0, 300)
+    mainFrame.Position = UDim2.new(0.5, -200, 0.5, -150) -- Centering the frame
+    mainFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    mainFrame.BorderSizePixel = 0
+    mainFrame.Parent = screenGui
+
+    -- Create the title bar
+    local titleBar = Instance.new("Frame")
+    titleBar.Name = "TitleBar"
+    titleBar.Size = UDim2.new(1, 0, 0, 30)
+    titleBar.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    titleBar.BorderSizePixel = 0
+    titleBar.Parent = mainFrame
+
+    -- Create text saying "Teleport GUI"
+    local guiText = Instance.new("TextLabel")
+    guiText.Name = "TeleportGUIText"
+    guiText.Size = UDim2.new(1, 0, 0, 30)
+    guiText.Position = UDim2.new(0, 0, 0, 0)
+    guiText.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    guiText.BorderSizePixel = 0
+    guiText.Text = "Teleport GUI"
+    guiText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    guiText.Font = Enum.Font.SourceSansBold
+    guiText.TextSize = 20
+    guiText.Parent = titleBar
+
+    -- Create the player list frame
+    local playerListFrame = Instance.new("ScrollingFrame")
+    playerListFrame.Name = "PlayerListFrame"
+    playerListFrame.Size = UDim2.new(0, 165, 1, -30) -- Maintain the height adjustment
+    playerListFrame.Position = UDim2.new(1, -235, 0, 30) -- Move it more to the right side of the main frame
+    playerListFrame.AnchorPoint = Vector2.new(1, 0) -- Anchor to the top right corner
+    playerListFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    playerListFrame.BorderSizePixel = 0
+    playerListFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+    playerListFrame.ScrollBarThickness = 9.4
+    playerListFrame.Parent = mainFrame
+    playerListFrame.VerticalScrollBarPosition = "Left"
+
+    -- Create a UIListLayout for the player list
+    local listLayout = Instance.new("UIListLayout")
+    listLayout.Parent = playerListFrame
+
+    -- Variable to store the selected player
+    local selectedPlayer = nil
+
+    -- Function to update the CanvasSize of the player list frame
+    local function updateCanvasSize()
+        local totalHeight = 0
+        for _, button in pairs(playerListFrame:GetChildren()) do
+            if button:IsA("TextButton") then
+                totalHeight = totalHeight + button.AbsoluteSize.Y + listLayout.Padding.Offset
+            end
+        end
+        playerListFrame.CanvasSize = UDim2.new(0, 0, 0, totalHeight)
+    end
+
+    -- Create a text label for displaying the selected player's name
+    local displayNameLabel = Instance.new("TextLabel")
+    displayNameLabel.Name = "DisplayNameLabel"
+    displayNameLabel.Size = UDim2.new(1, 0, 0, 30)
+    displayNameLabel.Position = UDim2.new(0, 0, 1, 10) -- Positioned below the teleport button
+    displayNameLabel.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    displayNameLabel.BorderSizePixel = 0
+    displayNameLabel.Text = ""
+    displayNameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    displayNameLabel.Font = Enum.Font.SourceSansBold
+    displayNameLabel.TextSize = 18
+    displayNameLabel.TextXAlignment = Enum.TextXAlignment.Left
+    displayNameLabel.Visible = false -- Initially hidden
+    displayNameLabel.Parent = mainFrame
+
+-- Function to update the display name label
+local function updateDisplayName()
+    if selectedPlayer then
+        if selectedPlayer.DisplayName == selectedPlayer.Name then
+            displayNameLabel.Visible = false
+            displayNameLabel.Text = "Selected Player Does Not Have A Display Name."
+        else
+            displayNameLabel.Text = "Player's Display Name: " .. selectedPlayer.DisplayName
+            displayNameLabel.Visible = true
+        end
+    else
+        displayNameLabel.Text = ""
+        displayNameLabel.Visible = false
+    end
+end
+                
+    -- Function to create player buttons
+    local function createPlayerButton(player)
+        -- Check if the player is not the local player
+        if player ~= game.Players.LocalPlayer then
+            local playerButton = Instance.new("TextButton")
+            playerButton.Name = player.Name .. "Button"
+            playerButton.Size = UDim2.new(1, 0, 0, 30)
+            playerButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+            playerButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            playerButton.Text = player.Name
+            playerButton.Parent = playerListFrame
+
+            playerButton.MouseButton1Click:Connect(function()
+                selectedPlayer = player
+                
+                for _, button in pairs(playerListFrame:GetChildren()) do
+                    if button:IsA("TextButton") then
+                        button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+                    end
+                end
+                playerButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+
+                -- Update display name label
+                updateDisplayName()
+                                
+            end)
+
+            -- Update the CanvasSize when a new player button is added
+            updateCanvasSize()
+        end
+    end
+                
+    -- Populate the player list
+    for _, player in pairs(game.Players:GetPlayers()) do
+        createPlayerButton(player)
+    end
+
+    -- Update the player list when a player joins
+    game.Players.PlayerAdded:Connect(function(player)
+        createPlayerButton(player)
+    end)
+
+    -- Update the player list when a player leaves
+    game.Players.PlayerRemoving:Connect(function(player)
+        for _, button in pairs(playerListFrame:GetChildren()) do
+            if button:IsA("TextButton") and button.Name == player.Name .. "Button" then
+                button:Destroy()
+                -- Update the CanvasSize when a player button is removed
+                updateCanvasSize()
+            end
+        end
+    end)
+
+    -- Create a teleport button
+    local teleportButton = Instance.new("TextButton")
+    teleportButton.Name = "TeleportButton"
+    teleportButton.Size = UDim2.new(0, 100, 0, 50)
+    teleportButton.Position = UDim2.new(0.5, 35, 0.5, -25)
+    teleportButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+    teleportButton.Text = "Teleport"
+    teleportButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    teleportButton.Parent = mainFrame
+
+    -- Import TweenService
+    local TweenService = game:GetService("TweenService")
+
+    -- Keep track of the current tween instance
+    local currentTween = nil
+
+    -- Function to tween towards a target player
+    local function tweenToPlayer(player)
+        local playerCharacter = player.Character
+        if playerCharacter and playerCharacter.PrimaryPart then
+            local targetPosition = playerCharacter.PrimaryPart.Position
+            local primaryPart = game.Players.LocalPlayer.Character.PrimaryPart
+
+            if primaryPart then
+                -- Calculate distance and determine a sensible duration
+                local distance = (targetPosition - primaryPart.Position).Magnitude
+                local duration = math.clamp(distance / 75, 0.5, 2) -- Adjusted for smoother transition
+
+                -- TweenInfo setup for smooth movement
+                local tweenInfo = TweenInfo.new(
+                    duration, -- Duration based on distance (adjusted for smoothness)
+                    Enum.EasingStyle.Quad, -- Easing style (Quad for smooth acceleration)
+                    Enum.EasingDirection.Out, -- Easing direction (Out for smooth finish)
+                    0, -- No repeat
+                    false, -- No reverses
+                    0 -- No delay
+                )
+
+                -- Create a new tween
+                local newTween = TweenService:Create(primaryPart, tweenInfo, {
+                    CFrame = CFrame.new(targetPosition)
+                })
+
+                -- If there's an existing tween, stop it first
+                if currentTween then
+                    currentTween:Cancel()
+                end
+
+                -- Update the current tween
+                currentTween = newTween
+
+                -- Play the new tween
+                newTween:Play()
+
+                -- Connect to the Completed event to clear the current tween
+                newTween.Completed:Connect(function()
+                    currentTween = nil
+                end)
+            end
+        end
+    end
+
+    -- Function to check for collision with the selected player
+    local function checkCollision(hit)
+        if hit:IsDescendantOf(selectedPlayer.Character) then
+            -- Stop the current tween when collision occurs
+            if currentTween then
+                currentTween:Cancel()
+                currentTween = nil
+            end
+        end
+    end
+
+    -- Teleport function with optimized smooth tween
+    teleportButton.MouseButton1Click:Connect(function()
+        if selectedPlayer then
+            tweenToPlayer(selectedPlayer)
+            updateDisplayName()
+        else
+            print("No player selected for teleportation.")
+        end
+    end)
+
+    -- Connect to local player's character touched event to check for collision with selected player
+    game.Players.LocalPlayer.Character.HumanoidRootPart.Touched:Connect(checkCollision)
+
+    -- Add shadow effect to the main frame
+    local shadow = Instance.new("ImageLabel")
+    shadow.Name = "Shadow"
+    shadow.Size = UDim2.new(1, 24, 1, 24)
+    shadow.Position = UDim2.new(0, -12, 0, -12)
+    shadow.Image = "rbxassetid://1316045217"
+    shadow.ImageColor3 = Color3.new(0, 0, 0)
+    shadow.ImageTransparency = 0.6
+    shadow.ScaleType = Enum.ScaleType.Slice
+    shadow.SliceCenter = Rect.new(10, 10, 118, 118)
+    shadow.BackgroundTransparency = 1
+    shadow.Parent = mainFrame
+
+    -- Function to handle when a player is selected
+    local function onPlayerSelected(player)
+        selectedPlayer = player
+        updateDisplayName()
+    end
+
+-- Connect the function to update the display name label when a player is selected
+teleportButton.MouseButton1Click:Connect(function()
+    if selectedPlayer then
+        onPlayerSelected(selectedPlayer)
+        updateDisplayName()
+        tweenToPlayer(selectedPlayer)
+    else
+        print("No player selected for teleportation.")
     end
 end)
-            end
-   end,
-})
-local Toggle = MainTab:CreateToggle({
-   Name = "Noclip",
-   CurrentValue = false,
-   Flag = "Toggle4", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-   Callback = function(noclip)
-if noclip then
-    local Players, Player = game:GetService("Players"), game:GetService("Players").LocalPlayer
-    getgenv().Noclip = true
-    getgenv().NoPlatform = false
-    getgenv().CanCollide = true
 
-    if setfflag then
-        setfflag("HumanoidParallelRemoveNoPhysics", "False")
-        setfflag("HumanoidParallelRemoveNoPhysicsNoSimulate2", "False")
+    -- Dragging variables
+    local dragging = false
+    local dragInput
+    local dragStart
+    local startPos
+
+    -- Function to update the position of the main frame
+    local function update(input)
+        local delta = input.Position - dragStart
+        mainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
     end
 
-    game:GetService("RunService").Stepped:Connect(
-        function()
-            if getgenv().Noclip then
-                for i, v in pairs(Player.Character:GetChildren()) do
-                    if v:IsA("BasePart") and getgenv().CanCollide then
-                        v.CanCollide = false
-                    elseif v:IsA("Humanoid") and getgenv().NoPlatform then
-                        v:ChangeState(11)
-                    end
+    -- InputBegan event handler
+    mainFrame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+            dragStart = input.Position
+            startPos = mainFrame.Position
+
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
                 end
-            end
+            end)
         end
-    )
-else
-    -- Reversed logic
-    local Players, Player = game:GetService("Players"), game:GetService("Players").LocalPlayer
-    getgenv().Noclip = false
-    getgenv().NoPlatform = true
-    getgenv().CanCollide = false
-
-    if setfflag then
-        setfflag("HumanoidParallelRemoveNoPhysics", "True")
-        setfflag("HumanoidParallelRemoveNoPhysicsNoSimulate2", "True")
-    end
-
-    game:GetService("RunService").Stepped:Connect(
-        function()
-            if not getgenv().Noclip then
-                for i, v in pairs(Player.Character:GetChildren()) do
-                    if v:IsA("BasePart") and not getgenv().CanCollide then
-                        v.CanCollide = true
-                    elseif v:IsA("Humanoid") and not getgenv().NoPlatform then
-                        -- Add logic here if needed
-                    end
-                end
-            end
-        end
-    )
-end
-
-        end,
-})
-local Toggle = MainTab:CreateToggle({
-   Name = "Invisible",
-   CurrentValue = false,
-   Flag = "Toggle5", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-   Callback = function(Invisible)
-if Invisible then
--- Script to turn player invisible upon running
-
-local function InvisibleScript()
-    local Transparency = true
-    local NoClip = true
-
-    local Player = game:GetService("Players").LocalPlayer
-    local RealCharacter = Player.Character or Player.CharacterAdded:Wait()
-
-    local IsInvisible = false
-
-    RealCharacter.Archivable = true
-    local FakeCharacter = RealCharacter:Clone()
-    local Part
-    Part = Instance.new("Part", workspace)
-    Part.Anchored = true
-    Part.Size = Vector3.new(200, 1, 200)
-    Part.CFrame = CFrame.new(0, -500, 0)
-    Part.CanCollide = true
-    FakeCharacter.Parent = workspace
-    FakeCharacter.HumanoidRootPart.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
-
-    for i, v in pairs(RealCharacter:GetChildren()) do
-        if v:IsA("LocalScript") then
-            local clone = v:Clone()
-            clone.Disabled = true
-            clone.Parent = FakeCharacter
-        end
-    end
-    if Transparency then
-        for i, v in pairs(FakeCharacter:GetDescendants()) do
-            if v:IsA("BasePart") then
-                v.Transparency = 0.7
-            end
-        end
-    end
-
-    local CanInvis = true
-    function RealCharacterDied()
-        CanInvis = false
-        RealCharacter:Destroy()
-        RealCharacter = Player.Character
-        CanInvis = true
-        IsInvisible = false
-        FakeCharacter:Destroy()
-        workspace.CurrentCamera.CameraSubject = RealCharacter.Humanoid
-
-        RealCharacter.Archivable = true
-        FakeCharacter = RealCharacter:Clone()
-        Part:Destroy()
-        Part = Instance.new("Part", workspace)
-        Part.Anchored = true
-        Part.Size = Vector3.new(200, 1, 200)
-        Part.CFrame = CFrame.new(9999, 9999, 9999)
-        Part.CanCollide = true
-        FakeCharacter.Parent = workspace
-        FakeCharacter.HumanoidRootPart.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
-
-        for i, v in pairs(RealCharacter:GetChildren()) do
-            if v:IsA("LocalScript") then
-                local clone = v:Clone()
-                clone.Disabled = true
-                clone.Parent = FakeCharacter
-            end
-        end
-        if Transparency then
-            for i, v in pairs(FakeCharacter:GetDescendants()) do
-                if v:IsA("BasePart") then
-                    v.Transparency = 0.5
-                end
-            end
-        end
-        RealCharacter.Humanoid.Died:Connect(function()
-            RealCharacter:Destroy()
-            FakeCharacter:Destroy()
-        end)
-        Player.CharacterAppearanceLoaded:Connect(RealCharacterDied)
-    end
-    RealCharacter.Humanoid.Died:Connect(function()
-        RealCharacter:Destroy()
-        FakeCharacter:Destroy()
-    end)
-    Player.CharacterAppearanceLoaded:Connect(RealCharacterDied)
-    local PseudoAnchor
-    game:GetService("RunService").RenderStepped:Connect(
-        function()
-            if PseudoAnchor ~= nil then
-                PseudoAnchor.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
-            end
-            if NoClip then
-                FakeCharacter.Humanoid:ChangeState(11)
-            end
-        end
-    )
-
-    PseudoAnchor = FakeCharacter.HumanoidRootPart
-    local function Invisible()
-        if IsInvisible == false then
-            local StoredCF = RealCharacter.HumanoidRootPart.CFrame
-            RealCharacter.HumanoidRootPart.CFrame = FakeCharacter.HumanoidRootPart.CFrame
-            FakeCharacter.HumanoidRootPart.CFrame = StoredCF
-            RealCharacter.Humanoid:UnequipTools()
-            Player.Character = FakeCharacter
-            workspace.CurrentCamera.CameraSubject = FakeCharacter.Humanoid
-            PseudoAnchor = RealCharacter.HumanoidRootPart
-            for i, v in pairs(FakeCharacter:GetChildren()) do
-                if v:IsA("LocalScript") then
-                    v.Disabled = false
-                end
-            end
-
-            IsInvisible = true
-        else
-            local StoredCF = FakeCharacter.HumanoidRootPart.CFrame
-            FakeCharacter.HumanoidRootPart.CFrame = RealCharacter.HumanoidRootPart.CFrame
-
-            RealCharacter.HumanoidRootPart.CFrame = StoredCF
-
-            FakeCharacter.Humanoid:UnequipTools()
-            Player.Character = RealCharacter
-            workspace.CurrentCamera.CameraSubject = RealCharacter.Humanoid
-            PseudoAnchor = FakeCharacter.HumanoidRootPart
-            for i, v in pairs(FakeCharacter:GetChildren()) do
-                if v:IsA("LocalScript") then
-                    v.Disabled = true
-                end
-            end
-            IsInvisible = false
-        end
-    end
-
-    -- Call the Invisible function to turn the player invisible immediately
-    Invisible()
-
-end
-
-coroutine.wrap(InvisibleScript)()
-                
-else
-    -- Reversed logic
-    local Transparency = true
-    local NoClip = true
-    local Player = game:GetService("Players").LocalPlayer
-    local RealCharacter = Player.Character or Player.CharacterAdded:Wait()
-
-    local IsInvisible = true
-
-    RealCharacter.Archivable = true
-    local FakeCharacter = RealCharacter:Clone()
-    local Part
-    Part = Instance.new("Part", workspace)
-    Part.Anchored = true
-    Part.Size = Vector3.new(200, 1, 200)
-    Part.CFrame = CFrame.new(0, -500, 0)
-    Part.CanCollide = true
-    FakeCharacter.Parent = workspace
-    FakeCharacter.HumanoidRootPart.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
-
-    for i, v in pairs(RealCharacter:GetChildren()) do
-        if v:IsA("LocalScript") then
-            local clone = v:Clone()
-            clone.Disabled = true
-            clone.Parent = FakeCharacter
-        end
-    end
-
-    if Transparency then
-        for i, v in pairs(FakeCharacter:GetDescendants()) do
-            if v:IsA("BasePart") then
-                v.Transparency = 0
-            end
-        end
-    end
-
-    local function RealCharacterDied()
-        RealCharacter:Destroy()
-        RealCharacter = Player.Character
-        FakeCharacter:Destroy()
-        workspace.CurrentCamera.CameraSubject = RealCharacter.Humanoid
-
-        RealCharacter.Archivable = true
-        FakeCharacter = RealCharacter:Clone()
-        Part:Destroy()
-        Part = Instance.new("Part", workspace)
-        Part.Anchored = true
-        Part.Size = Vector3.new(200, 1, 200)
-        Part.CFrame = CFrame.new(9999, 9999, 9999)
-        Part.CanCollide = true
-        FakeCharacter.Parent = workspace
-        FakeCharacter.HumanoidRootPart.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
-
-        for i, v in pairs(RealCharacter:GetChildren()) do
-            if v:IsA("LocalScript") then
-                local clone = v:Clone()
-                clone.Disabled = true
-                clone.Parent = FakeCharacter
-            end
-        end
-
-        if Transparency then
-            for i, v in pairs(FakeCharacter:GetDescendants()) do
-                if v:IsA("BasePart") then
-                    v.Transparency = 0
-
-                end
-            end
-        end
-    end
-
-    RealCharacter.Humanoid.Died:Connect(function()
-        RealCharacter:Destroy()
-        FakeCharacter:Destroy()
     end)
 
-    Player.CharacterAppearanceLoaded:Connect(RealCharacterDied)
+    -- InputChanged event handler
+    mainFrame.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement then
+            dragInput = input
+        end
+    end)
 
-    local PseudoAnchor
+    -- Update the main frame position smoothly
     game:GetService("RunService").RenderStepped:Connect(function()
-        if PseudoAnchor then
-            PseudoAnchor.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
-        end
-
-        if NoClip then
-            FakeCharacter.Humanoid:ChangeState(11)
+        if dragging and dragInput then
+            update(dragInput)
         end
     end)
-
-    local function ToggleInvisibility()
-        if IsInvisible then
-            local StoredCF = RealCharacter.HumanoidRootPart.CFrame
-            RealCharacter.HumanoidRootPart.CFrame = FakeCharacter.HumanoidRootPart.CFrame
-            FakeCharacter.HumanoidRootPart.CFrame = StoredCF
-            RealCharacter.Humanoid:UnequipTools()
-            Player.Character = FakeCharacter
-            workspace.CurrentCamera.CameraSubject = FakeCharacter.Humanoid
-            PseudoAnchor = RealCharacter.HumanoidRootPart
-
-            for _, v in pairs(FakeCharacter:GetChildren()) do
-                if v:IsA("LocalScript") then
-                    v.Disabled = false
-                end
-            end
-
-            IsInvisible = false
-        end
-    end
-
-    ToggleInvisibility()
+else
+    -- Destroy the existing GUI if it already exists
+    screenGui:Destroy()
 end
 
-   end,
+	end,
 })
-local Toggle = MainTab:CreateToggle({
-   Name = "Walk On Walls",
-   CurrentValue = false,
-   Flag = "Toggle2", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-   Callback = function(WalkOnWallsStarted)
-        if _G.WalkOnWallsStarted == nil then
-  _G.WalkOnWallsStarted = true
-  local mouse = game:GetService("Players").LocalPlayer:GetMouse()
-
-  repeat wait() until mouse
-
-        loadstring(game:HttpGet("https://pastebin.com/raw/zXk4Rq2r"))()
-end
-   end,
-})
-
 local Button = MainTab:CreateButton({
-   Name = "Fly GUI",
+	Name = "Unnamed ESP",
+	Callback = function()
+		pcall(function() loadstring(game:HttpGet('https://raw.githubusercontent.com/ic3w0lf22/Unnamed-ESP/master/UnnamedESP.lua'))() end)
+	end,
+})
+local Button = MainTab:CreateButton({
+   Name = "Walk On Walls (Reset Your Character To Turn Off)",
    Callback = function()
-        loadstring(game:HttpGet("https://pastebin.com/raw/V2RQf7HC"))()
+    loadstring(game:HttpGet("https://scriptblox.com/raw/Universal-Script-Walk-on-walls-10445"))()
    end,
+})
+local Button = MainTab:CreateButton({
+	Name = "Fly GUI",
+	Callback = function()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
+	end,
 })
 
 local MiscTab = Window:CreateTab("Misc", 13692792090) -- Title, Image
 local MiscSection = MiscTab:CreateSection("Other Scripts")
 
 local Toggle = MiscTab:CreateToggle({
-   Name = "Anti AFK",
-   CurrentValue = true,
-   Flag = "Toggle3", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-   Callback = function(AntiAFK)
-if AntiAFK then
-local vu = game:GetService("VirtualUser")
-game:GetService("Players").LocalPlayer.Idled:connect(function()
-vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-wait(1)
-vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-end)
-        else
--- Declare idledConnection outside so it's accessible in both functions
-local idledConnection
+	Name = "Anti-AFK",
+	CurrentValue = true,
+	Flag = "Toggle3", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+local AntiAFK = Value
+            
+-- Initialize the necessary services
+local Players = game:GetService("Players")
+local VirtualUser = game:GetService("VirtualUser")
+local LocalPlayer = Players.LocalPlayer
 
--- Function to start the anti-idle behavior
-local function startAntiIdle()
-    local vu = game:GetService("VirtualUser")
-    idledConnection = game:GetService("Players").LocalPlayer.Idled:connect(function()
-        vu:Button2Down(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+-- Store the connection to the Idled event
+local idleConnection
+
+-- Function to start the idled connection
+local function startIdledConnection()
+    idleConnection = LocalPlayer.Idled:Connect(function()
+        VirtualUser:Button2Down(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
         wait(1)
-        vu:Button2Up(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+        VirtualUser:Button2Up(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
     end)
 end
 
--- Function to stop the anti-idle behavior
-local function stopAntiIdle()
-    if idledConnection then
-        idledConnection:Disconnect()
-        idledConnection = nil
+-- Function to stop the idled connection
+local function stopIdledConnection()
+    if idleConnection then
+        idleConnection:Disconnect()
+        idleConnection = nil
     end
 end
 
--- The main conditional logic to toggle anti-AFK
 if AntiAFK then
-    startAntiIdle()
-else
-    stopAntiIdle()
-            end
+startIdledConnection()
+        else
+stopIdledConnection()
         end
-   end,
+	end,
 })
-
 local Toggle = MiscTab:CreateToggle({
-   Name = "Teleport GUI",
-   CurrentValue = false,
-   Flag = "Toggle6", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-   Callback = function(TeleportGUI)
-        if TeleportGUI then
-                --//TELEPORT GUI CODE HERE!
-            else
-                screenGui:Destroy()
-            end
-   end,
+	Name = "Click To Teleport",
+	CurrentValue = false,
+	Flag = "Toggle7", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(WRDClickTeleport)
+		if _G.WRDClickTeleport == nil then
+			_G.WRDClickTeleport = true
+
+			local player = game:GetService("Players").LocalPlayer
+			local UserInputService = game:GetService("UserInputService")
+			local mouse = player:GetMouse()
+			local TweenService = game:GetService("TweenService")
+
+			repeat task.wait() until mouse
+
+			UserInputService.InputBegan:Connect(function(input, gameProcessed)
+				if input.UserInputType == Enum.UserInputType.MouseButton1 then
+					if _G.WRDClickTeleport and UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then
+						local targetPosition = Vector3.new(mouse.Hit.x, mouse.Hit.y, mouse.Hit.z)
+						local character = player.Character or player.CharacterAdded:Wait()
+						local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+						local tweenInfo = TweenInfo.new(
+							1, -- Duration
+							Enum.EasingStyle.Linear, -- EasingStyle
+							Enum.EasingDirection.Out, -- EasingDirection
+							0, -- RepeatCount
+							false, -- Reverses
+							0 -- DelayTime
+						)
+
+						local tween = TweenService:Create(humanoidRootPart, tweenInfo, {CFrame = CFrame.new(targetPosition)})
+						tween:Play()
+					end
+				end
+			end)
+
+			Rayfield:Notify({
+				Title = "Click teleport enabled",
+				Content = "Press left ctrl + click to where you want to teleport",
+				Duration = 6,
+				Image = 18155470311,
+			})
+		else
+			_G.WRDClickTeleport = not _G.WRDClickTeleport
+			if _G.WRDClickTeleport then
+				Rayfield:Notify({
+					Title = "Click teleport enabled",
+					Content = "Press left ctrl + click to where you want to teleport",
+					Duration = 6,
+					Image = 18155470311,
+				})
+			end
+		end
+	end,
 })
 
 local Button = MiscTab:CreateButton({
-   Name = "Follow Player GUI",
-   Callback = function()
--- Create ScreenGui
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "FollowPlayerGUI"
-screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+	Name = "Follow GUI",
+	Callback = function()
+local FollowGUI = Instance.new("ScreenGui")
+local Background = Instance.new("Frame")
+local CloseButton = Instance.new("TextButton")
+local GlossEffect = Instance.new("ImageLabel")
+local UICorner = Instance.new("UICorner")
+local UICorner_2 = Instance.new("UICorner")
+local UITextSizeConstraint = Instance.new("UITextSizeConstraint")
+local Scrolling = Instance.new("Frame")
+local ScrollingFrame = Instance.new("ScrollingFrame")
+local UICorner_3 = Instance.new("UICorner")
+local ListLable = Instance.new("TextLabel")
+local UITextSizeConstraint_2 = Instance.new("UITextSizeConstraint")
+local UICorner_4 = Instance.new("UICorner")
+local FollowButton = Instance.new("TextButton")
+local UICorner_5 = Instance.new("UICorner")
+local UITextSizeConstraint_3 = Instance.new("UITextSizeConstraint")
+local DisplayNameLabel = Instance.new("TextLabel")
+local UITextSizeConstraint_4 = Instance.new("UITextSizeConstraint")
+local DisplayName = Instance.new("TextLabel")
+local UITextSizeConstraint_5 = Instance.new("UITextSizeConstraint")
+local Title = Instance.new("Frame")
+local UICorner_6 = Instance.new("UICorner")
+local FollowGUILable = Instance.new("TextLabel")
+local UITextSizeConstraint_6 = Instance.new("UITextSizeConstraint")
+local UIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")
 
--- Create Frame
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 250, 1, 0)
-frame.Position = UDim2.new(1, -250, 0, 0)
-frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Dark gray color
-frame.BorderSizePixel = 0
-frame.Parent = screenGui
+-- Properties:
 
--- Create Title
-local title = Instance.new("TextLabel")
-title.Text = "Follow Player GUI"
-title.Size = UDim2.new(1, 0, 0, 30)
-title.Position = UDim2.new(0, 0, 0, 0)
-title.TextSize = 18
-title.BackgroundTransparency = 0
-title.BackgroundColor3 = Color3.fromRGB(70, 70, 70) -- Dark gray color
-title.BorderSizePixel = 0
-title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.Font = Enum.Font.SourceSansBold
-title.TextScaled = true  -- Make the text bold
-title.Parent = frame
+FollowGUI.Name = "Follow GUI"
+FollowGUI.Parent = game.CoreGui
+FollowGUI.ResetOnSpawn = false
 
--- Create Player List Title
-local playerListTitle = Instance.new("TextLabel")
-playerListTitle.Text = "Player List"
-playerListTitle.Size = UDim2.new(1, 0, 0, 30)
-playerListTitle.Position = UDim2.new(0, 0, 0, 30)
-playerListTitle.TextSize = 18
-playerListTitle.BackgroundTransparency = 0
-playerListTitle.BackgroundColor3 = Color3.fromRGB(70, 70, 70) -- Dark gray color
-playerListTitle.BorderSizePixel = 0
-playerListTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-playerListTitle.Font = Enum.Font.SourceSans
-playerListTitle.Parent = frame
+Background.Name = "Background"
+Background.Parent = FollowGUI
+Background.BackgroundColor3 = Color3.fromRGB(33, 33, 33)
+Background.BorderSizePixel = 0
+Background.Position = UDim2.new(0.329926997, 0, 0.313117057, 0)
+Background.Size = UDim2.new(0.313138694, 0, 0.346967548, 0)
 
--- Create ScrollFrame
-local scrollFrame = Instance.new("ScrollingFrame")
-scrollFrame.Size = UDim2.new(1, 0, 1, -60)
-scrollFrame.Position = UDim2.new(0, 0, 0, 60)
-scrollFrame.BackgroundTransparency = 1
-scrollFrame.BorderSizePixel = 0
-scrollFrame.ScrollBarThickness = 8
-scrollFrame.Parent = frame
+CloseButton.Name = "CloseButton"
+CloseButton.Parent = Background
+CloseButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+CloseButton.BackgroundTransparency = 0.500
+CloseButton.BorderSizePixel = 0
+CloseButton.Position = UDim2.new(0.906759918, 0, 0.12195123, 0)
+CloseButton.Size = UDim2.new(0.0559440553, 0, 0.0975609794, 0)
+CloseButton.Font = Enum.Font.ArialBold
+CloseButton.Text = "X"
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.TextScaled = true
+CloseButton.TextSize = 18.000
+CloseButton.TextWrapped = true
 
--- Function to update player list
-local function updatePlayerList()
-    for _, player in ipairs(game.Players:GetPlayers()) do
-        local button = Instance.new("TextButton")
-        button.Text = player.Name
-        button.Size = UDim2.new(1, -10, 0, 30)
-        button.Position = UDim2.new(0, 5, 0, ((button.Size.Y.Offset + 5) * (#scrollFrame:GetChildren() - 1)))
-        button.TextSize = 18
-        button.BackgroundColor3 = Color3.fromRGB(70, 70, 70) -- Dark gray color
-        button.BorderSizePixel = 0
-        button.TextColor3 = Color3.fromRGB(255, 255, 255)
-        button.Font = Enum.Font.SourceSans
-        button.Parent = scrollFrame
+GlossEffect.Name = "GlossEffect"
+GlossEffect.Parent = CloseButton
+GlossEffect.BackgroundTransparency = 1.000
+GlossEffect.Rotation = -90.000
+GlossEffect.Size = UDim2.new(1, 0, 1, 0)
+GlossEffect.ZIndex = 2
+GlossEffect.Image = "rbxasset://textures/BWGradient.png"
+GlossEffect.ImageTransparency = 0.500
 
-        -- Button click event to set the target player
-        button.MouseButton1Click:Connect(function()
-            _G.MagnetizeToTarget = player.Name
+UICorner.CornerRadius = UDim.new(0, 3)
+UICorner.Parent = GlossEffect
+
+UICorner_2.CornerRadius = UDim.new(0, 3)
+UICorner_2.Parent = CloseButton
+
+UITextSizeConstraint.Parent = CloseButton
+UITextSizeConstraint.MaxTextSize = 24
+
+Scrolling.Name = "Scrolling"
+Scrolling.Parent = Background
+Scrolling.BackgroundColor3 = Color3.fromRGB(66, 66, 66)
+Scrolling.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Scrolling.BorderSizePixel = 0
+Scrolling.Position = UDim2.new(0, 0, 0.08130081, 0)
+Scrolling.Size = UDim2.new(0.35431236, 0, 0.918699265, 0)
+
+ScrollingFrame.Parent = Scrolling
+ScrollingFrame.Active = true
+ScrollingFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ScrollingFrame.BackgroundTransparency = 1.000
+ScrollingFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+ScrollingFrame.BorderSizePixel = 0
+ScrollingFrame.Position = UDim2.new(0.0217225607, 0, 0, 0)
+ScrollingFrame.Size = UDim2.new(1, 0, 0.964601755, 0)
+ScrollingFrame.ScrollBarThickness = 10
+ScrollingFrame.VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Left
+
+UICorner_3.CornerRadius = UDim.new(0, 7)
+UICorner_3.Parent = Scrolling
+
+ListLable.Name = "ListLable"
+ListLable.Parent = ScrollingFrame
+ListLable.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ListLable.BackgroundTransparency = 1.000
+ListLable.BorderColor3 = Color3.fromRGB(0, 0, 0)
+ListLable.BorderSizePixel = 0
+ListLable.Position = UDim2.new(0.171052635, 0, 0.002520324, 0)
+ListLable.Size = UDim2.new(0.657894731, 0, 0.0884955749, 0)
+ListLable.Font = Enum.Font.SourceSansBold
+ListLable.Text = "Player List"
+ListLable.TextColor3 = Color3.fromRGB(0, 0, 0)
+ListLable.TextScaled = true
+ListLable.TextSize = 14.000
+ListLable.TextWrapped = true
+
+UITextSizeConstraint_2.Parent = ListLable
+UITextSizeConstraint_2.MaxTextSize = 20
+
+UICorner_4.CornerRadius = UDim.new(0, 7)
+UICorner_4.Parent = Background
+
+FollowButton.Name = "FollowButton"
+FollowButton.Parent = Background
+FollowButton.BackgroundColor3 = Color3.fromRGB(66, 66, 66)
+FollowButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+FollowButton.BorderSizePixel = 0
+FollowButton.Position = UDim2.new(0.484848499, 0, 0.552845538, 0)
+FollowButton.Size = UDim2.new(0.396270394, 0, 0.292682946, 0)
+FollowButton.Font = Enum.Font.FredokaOne
+FollowButton.Text = "Follow"
+FollowButton.TextColor3 = Color3.fromRGB(33, 99, 48)
+FollowButton.TextScaled = true
+FollowButton.TextSize = 14.000
+FollowButton.TextWrapped = true
+
+FollowButton.MouseButton1Click:Connect(function()
+    if FollowButton.Text == "Follow" then
+        FollowButton.Text = "Unfollow"
+        -- Import TweenService
+        local TweenService = game:GetService("TweenService")
+
+        -- Function to tween towards a target player continuously
+        local function tweenToPlayer(player)
+            local playerCharacter = player.Character
+            if playerCharacter and playerCharacter.PrimaryPart then
+                local targetPosition = playerCharacter.PrimaryPart.Position
+                local primaryPart = game.Players.LocalPlayer.Character.PrimaryPart
+
+                if primaryPart then
+                    -- Calculate distance and determine a sensible duration
+                    local distance = (targetPosition - primaryPart.Position).Magnitude
+                    local duration = math.clamp(distance / 75, 0.5, 2) -- Adjusted for smoother transition
+
+                    -- TweenInfo setup for smooth movement
+                    local tweenInfo = TweenInfo.new(
+                        duration, -- Duration based on distance (adjusted for smoothness)
+                        Enum.EasingStyle.Quad, -- Easing style (Quad for smooth acceleration)
+                        Enum.EasingDirection.Out, -- Easing direction (Out for smooth finish)
+                        0, -- No repeat
+                        false, -- No reverses
+                        0 -- No delay
+                    )
+
+                    -- Define the tween
+                    local tween = TweenService:Create(primaryPart, tweenInfo, {
+                        CFrame = CFrame.new(targetPosition)
+                    })
+
+                    -- Play the tween
+                    tween:Play()
+
+                    -- Connect to the Completed event to trigger the next tween
+                    tween.Completed:Connect(function()
+                        if player == selectedPlayer then
+                            tweenToPlayer(player) -- Recursively tween to the player
+                        end
+                    end)
+                end
+            end
+        end
+
+        -- Teleport function with optimized smooth tween
+        teleportButton.MouseButton1Click:Connect(function()
+            if selectedPlayer then
+                tweenToPlayer(selectedPlayer)
+            else
+                print("No player selected for teleportation.")
+            end
+        end)
+    else
+        FollowButton.Text = "Follow"
+        -- Add unfollow logic here if needed
+    end
+end)
+
+UICorner_5.CornerRadius = UDim.new(0, 5)
+UICorner_5.Parent = FollowButton
+
+UITextSizeConstraint_3.Parent = FollowButton
+UITextSizeConstraint_3.MaxTextSize = 64
+
+DisplayNameLabel.Name = "DisplayNameLabel"
+DisplayNameLabel.Parent = Background
+DisplayNameLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+DisplayNameLabel.BackgroundTransparency = 1.000
+DisplayNameLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+DisplayNameLabel.BorderSizePixel = 0
+DisplayNameLabel.Position = UDim2.new(0.530746937, 0, 0.219512194, 0)
+DisplayNameLabel.Size = UDim2.new(0.25, 0, 0.15, 0)
+DisplayNameLabel.Font = Enum.Font.SourceSansBold
+DisplayNameLabel.Text = "Display Name:"
+DisplayNameLabel.TextColor3 = Color3.fromRGB(9, 9, 9)
+DisplayNameLabel.TextScaled = true
+DisplayNameLabel.TextSize = 14.000
+DisplayNameLabel.TextWrapped = true
+
+UITextSizeConstraint_4.Parent = DisplayNameLabel
+UITextSizeConstraint_4.MaxTextSize = 48
+
+DisplayName.Name = "DisplayName"
+DisplayName.Parent = Background
+DisplayName.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+DisplayName.BackgroundTransparency = 1.000
+DisplayName.BorderColor3 = Color3.fromRGB(0, 0, 0)
+DisplayName.BorderSizePixel = 0
+DisplayName.Position = UDim2.new(0.542402089, 0, 0.386002451, 0)
+DisplayName.Size = UDim2.new(0.270396262, 0, 0.126016274, 0)
+DisplayName.Font = Enum.Font.SourceSansBold
+DisplayName.Text = "DisplayName"
+DisplayName.TextColor3 = Color3.fromRGB(0, 0, 0)
+DisplayName.TextScaled = true
+DisplayName.TextSize = 14.000
+DisplayName.TextWrapped = true
+
+UITextSizeConstraint_5.Parent = DisplayName
+UITextSizeConstraint_5.MaxTextSize = 31
+
+Title.Name = "Title"
+Title.Parent = Background
+Title.BackgroundColor3 = Color3.fromRGB(49, 49, 49)
+Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Title.BorderSizePixel = 0
+Title.Size = UDim2.new(1, 0, 0.0813008174, 0)
+
+UICorner_6.CornerRadius = UDim.new(0, 7)
+UICorner_6.Parent = Title
+
+FollowGUILable.Name = "FollowGUILable"
+FollowGUILable.Parent = Title
+FollowGUILable.BackgroundColor3 = Color3.fromRGB(47, 47, 47)
+FollowGUILable.BackgroundTransparency = 1.000
+FollowGUILable.BorderColor3 = Color3.fromRGB(0, 0, 0)
+FollowGUILable.BorderSizePixel = 0
+FollowGUILable.Position = UDim2.new(0.338540673, 0, 0, 0)
+FollowGUILable.Size = UDim2.new(0.405594409, 0, 1, 0)
+FollowGUILable.Font = Enum.Font.Unknown
+FollowGUILable.Text = "Follow GUI"
+FollowGUILable.TextColor3 = Color3.fromRGB(207, 207, 0)
+FollowGUILable.TextScaled = true
+FollowGUILable.TextSize = 14.000
+FollowGUILable.TextWrapped = true
+
+UITextSizeConstraint_6.Parent = FollowGUILable
+UITextSizeConstraint_6.MaxTextSize = 20
+
+UIAspectRatioConstraint.Parent = Background
+UIAspectRatioConstraint.AspectRatio = 1.713
+
+-- CloseButton script
+local function close()
+    FollowGUI:Destroy()
+end
+
+CloseButton.MouseButton1Click:Connect(close)
+
+-- Custom drag script
+local UserInputService = game:GetService("UserInputService")
+local dragging
+local dragInput
+local dragStart
+local startPos
+
+local function update(input)
+    local delta = input.Position - dragStart
+    Background.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+
+Background.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = Background.Position
+        
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+Background.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType.Touch then
+        dragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        update(input)
+    end
+end)
+
+local function addPlayerButtons()
+    -- Clear existing buttons first
+    for _, child in pairs(ScrollingFrame:GetChildren()) do
+        if child:IsA("TextButton") then
+            child:Destroy()
+        end
+    end
+    
+    -- Add new buttons
+    for i, player in ipairs(game.Players:GetPlayers()) do
+        local playerButton = Instance.new("TextButton")
+        playerButton.Name = player.Name .. "Button"
+        playerButton.Parent = ScrollingFrame
+        playerButton.BackgroundColor3 = Color3.fromRGB(66, 66, 66)
+        playerButton.BorderSizePixel = 0
+        playerButton.Position = UDim2.new(0, 0, 0.1 + (i - 1) * 0.1, 0)  -- Adjust position to be under player list label
+        
+        -- Calculate button size based on the length of the player's name
+        local textLength = string.len(player.Name)
+        local buttonWidth = 100 + (textLength * 10)  -- Base width plus additional for each character
+        playerButton.Size = UDim2.new(0, buttonWidth, 0.1, 0)  -- Adjust size based on text length
+        
+        -- Adjust text size based on text length
+        local textSize = math.clamp(18 - (textLength * 0.5), 10, 18)  -- Adjust the formula to fit your preference
+        playerButton.TextSize = textSize
+        
+        playerButton.Font = Enum.Font.SourceSans
+        playerButton.Text = player.Name
+        playerButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        playerButton.TextScaled = true
+        playerButton.TextWrapped = true
+
+        playerButton.MouseButton1Click:Connect(function()
+            selectedPlayer = player
+            DisplayName.Text = player.DisplayName
         end)
     end
 end
 
--- Update player list initially
-updatePlayerList()
+addPlayerButtons()
 
--- Update player list whenever a player joins or leaves
-game.Players.PlayerAdded:Connect(updatePlayerList)
-game.Players.PlayerRemoving:Connect(updatePlayerList)
+game.Players.PlayerAdded:Connect(function(player)
+    addPlayerButtons()
+end)
 
--- Original script
-game:GetService('RunService').Stepped:Connect(function()
-    for _, v in pairs(game:GetService("Players").LocalPlayer.Character:GetChildren()) do
-        if v:IsA("BasePart") then 
-            v.CanCollide = false
+game.Players.PlayerRemoving:Connect(function(player)
+    addPlayerButtons()
+end)
+
+    end,
+})
+local Button = MiscTab:CreateButton({
+	Name = "Bring GUI",
+	Callback = function()
+local BringGUI = Instance.new("ScreenGui")
+local Background = Instance.new("Frame")
+local UIGradient = Instance.new("UIGradient")
+local BringGUILabel = Instance.new("TextLabel")
+local UICorner = Instance.new("UICorner")
+local UIGradient_2 = Instance.new("UIGradient")
+local UITextSizeConstraint = Instance.new("UITextSizeConstraint")
+local UICorner_2 = Instance.new("UICorner")
+local PlayerList = Instance.new("Frame")
+local ScrollingFrame = Instance.new("ScrollingFrame")
+local UICorner_3 = Instance.new("UICorner")
+local UICorner_4 = Instance.new("UICorner")
+local PlayerListLabel = Instance.new("TextLabel")
+local UICorner_5 = Instance.new("UICorner")
+local UITextSizeConstraint_2 = Instance.new("UITextSizeConstraint")
+local BringButton = Instance.new("TextButton")
+local UICorner_6 = Instance.new("UICorner")
+local UITextSizeConstraint_3 = Instance.new("UITextSizeConstraint")
+local UsernameLabel = Instance.new("TextLabel")
+local UICorner_7 = Instance.new("UICorner")
+local UITextSizeConstraint_4 = Instance.new("UITextSizeConstraint")
+local PlayersUsernameLabel = Instance.new("TextLabel")
+local UICorner_8 = Instance.new("UICorner")
+local UITextSizeConstraint_5 = Instance.new("UITextSizeConstraint")
+local CloseButton = Instance.new("TextButton")
+local UICorner_9 = Instance.new("UICorner")
+local UITextSizeConstraint_6 = Instance.new("UITextSizeConstraint")
+local UIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")
+
+--Properties:
+
+BringGUI.Name = "BringGUI"
+BringGUI.Parent = game.CoreGui
+BringGUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+Background.Name = "Background"
+Background.Parent = BringGUI
+Background.AnchorPoint = Vector2.new(0.5, 0.5)
+Background.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Background.BackgroundTransparency = 0.100
+Background.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Background.BorderSizePixel = 0
+Background.Position = UDim2.new(0.5, 0, 0.499254853, 0)
+Background.Size = UDim2.new(0.333999991, 0, 0.388000041, 0)
+Background.Active = true
+Background.Draggable = true
+
+UIGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(9, 9, 9)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(58, 58, 58))}
+UIGradient.Parent = Background
+
+BringGUILabel.Name = "BringGUILabel"
+BringGUILabel.Parent = Background
+BringGUILabel.AnchorPoint = Vector2.new(0.5, 0.5)
+BringGUILabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+BringGUILabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+BringGUILabel.BorderSizePixel = 0
+BringGUILabel.Position = UDim2.new(0.500458956, 0, 0.0460921489, 0)
+BringGUILabel.Size = UDim2.new(1.00108933, 0, 0.103693716, 0)
+BringGUILabel.Font = Enum.Font.Unknown
+BringGUILabel.Text = "Bring GUI"
+BringGUILabel.TextColor3 = Color3.fromRGB(71, 71, 71)
+BringGUILabel.TextScaled = true
+BringGUILabel.TextSize = 14.000
+BringGUILabel.TextWrapped = true
+
+UICorner.Parent = BringGUILabel
+
+UIGradient_2.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(31, 31, 31)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(70, 70, 70))}
+UIGradient_2.Parent = BringGUILabel
+
+UITextSizeConstraint.Parent = BringGUILabel
+UITextSizeConstraint.MaxTextSize = 26
+
+UICorner_2.Parent = Background
+
+PlayerList.Name = "PlayerList"
+PlayerList.Parent = Background
+PlayerList.AnchorPoint = Vector2.new(0.5, 0.5)
+PlayerList.BackgroundColor3 = Color3.fromRGB(48, 49, 52)
+PlayerList.BorderColor3 = Color3.fromRGB(0, 0, 0)
+PlayerList.BorderSizePixel = 0
+PlayerList.Position = UDim2.new(0.159534946, 0, 0.545423746, 0)
+PlayerList.Size = UDim2.new(0.324654102, 0, 0.90425235, 0)
+
+ScrollingFrame.Parent = PlayerList
+ScrollingFrame.Active = true
+ScrollingFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+ScrollingFrame.BackgroundColor3 = Color3.fromRGB(48, 49, 52)
+ScrollingFrame.BackgroundTransparency = 1.000
+ScrollingFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+ScrollingFrame.BorderSizePixel = 0
+ScrollingFrame.Position = UDim2.new(0.504862785, 0, 0.513974309, 0)
+ScrollingFrame.Size = UDim2.new(1.00306487, 0, 1.00629127, 0)
+ScrollingFrame.ScrollBarThickness = 9
+ScrollingFrame.VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Left
+
+UICorner_3.Parent = ScrollingFrame
+
+UICorner_4.Parent = PlayerList
+
+PlayerListLabel.Name = "PlayerListLabel"
+PlayerListLabel.Parent = ScrollingFrame
+PlayerListLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+PlayerListLabel.BackgroundColor3 = Color3.fromRGB(24, 25, 28)
+PlayerListLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+PlayerListLabel.BorderSizePixel = 0
+PlayerListLabel.Position = UDim2.new(0.498131275, 0, 0.0807067156, 0)
+PlayerListLabel.Size = UDim2.new(0.604026973, 0, 0.0829608142, 0)
+PlayerListLabel.Font = Enum.Font.SourceSansBold
+PlayerListLabel.Text = "Player List"
+PlayerListLabel.TextColor3 = Color3.fromRGB(51, 54, 56)
+PlayerListLabel.TextScaled = true
+PlayerListLabel.TextSize = 14.000
+PlayerListLabel.TextWrapped = true
+
+UICorner_5.CornerRadius = UDim.new(0, 4)
+UICorner_5.Parent = PlayerListLabel
+
+UITextSizeConstraint_2.Parent = PlayerListLabel
+UITextSizeConstraint_2.MaxTextSize = 19
+
+BringButton.Name = "BringButton"
+BringButton.Parent = Background
+BringButton.AnchorPoint = Vector2.new(0.5, 0.5)
+BringButton.BackgroundColor3 = Color3.fromRGB(24, 25, 28)
+BringButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+BringButton.BorderSizePixel = 0
+BringButton.Position = UDim2.new(0.646881461, 0, 0.660654128, 0)
+BringButton.Size = UDim2.new(0.435777307, 0, 0.191514358, 0)
+BringButton.Font = Enum.Font.Unknown
+BringButton.Text = "Bring"
+BringButton.TextColor3 = Color3.fromRGB(113, 113, 113)
+BringButton.TextScaled = true
+BringButton.TextSize = 14.000
+BringButton.TextWrapped = true
+
+BringButton.MouseButton1Down:connect(function()
+	-- bring player script here
+end)
+
+UICorner_6.CornerRadius = UDim.new(0, 4)
+UICorner_6.Parent = BringButton
+
+UITextSizeConstraint_3.Parent = BringButton
+UITextSizeConstraint_3.MaxTextSize = 49
+
+UsernameLabel.Name = "UsernameLabel"
+UsernameLabel.Parent = Background
+UsernameLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+UsernameLabel.BackgroundColor3 = Color3.fromRGB(37, 38, 40)
+UsernameLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+UsernameLabel.BorderSizePixel = 0
+UsernameLabel.Position = UDim2.new(0.646881461, 0, 0.453239471, 0)
+UsernameLabel.Size = UDim2.new(0.185205355, 0, 0.0842663199, 0)
+UsernameLabel.Font = Enum.Font.SourceSans
+UsernameLabel.Text = "Username"
+UsernameLabel.TextColor3 = Color3.fromRGB(113, 113, 113)
+UsernameLabel.TextScaled = true
+UsernameLabel.TextSize = 14.000
+UsernameLabel.TextWrapped = true
+
+UICorner_7.CornerRadius = UDim.new(0, 3)
+UICorner_7.Parent = UsernameLabel
+
+UITextSizeConstraint_4.Parent = UsernameLabel
+UITextSizeConstraint_4.MaxTextSize = 21
+
+PlayersUsernameLabel.Name = "PlayersUsernameLabel"
+PlayersUsernameLabel.Parent = Background
+PlayersUsernameLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+PlayersUsernameLabel.BackgroundColor3 = Color3.fromRGB(25, 26, 29)
+PlayersUsernameLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+PlayersUsernameLabel.BorderSizePixel = 0
+PlayersUsernameLabel.Position = UDim2.new(0.646881461, 0, 0.303439975, 0)
+PlayersUsernameLabel.Size = UDim2.new(0.264434636, 0, 0.142235383, 0)
+PlayersUsernameLabel.Font = Enum.Font.SourceSansBold
+PlayersUsernameLabel.Text = "Players Username:"
+PlayersUsernameLabel.TextColor3 = Color3.fromRGB(113, 113, 113)
+PlayersUsernameLabel.TextScaled = true
+PlayersUsernameLabel.TextSize = 14.000
+PlayersUsernameLabel.TextWrapped = true
+
+UICorner_8.CornerRadius = UDim.new(0, 3)
+UICorner_8.Parent = PlayersUsernameLabel
+
+UITextSizeConstraint_5.Parent = PlayersUsernameLabel
+UITextSizeConstraint_5.MaxTextSize = 36
+
+CloseButton.Name = "CloseButton"
+CloseButton.Parent = Background
+CloseButton.AnchorPoint = Vector2.new(0.5, 0.5)
+CloseButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+CloseButton.BackgroundTransparency = 0.500
+CloseButton.BorderSizePixel = 0
+CloseButton.Position = UDim2.new(0.941911817, 0, 0.165163532, 0)
+CloseButton.Size = UDim2.new(0.0458205193, 0, 0.0785162821, 0)
+CloseButton.Font = Enum.Font.ArialBold
+CloseButton.Text = "X"
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.TextScaled = true
+CloseButton.TextSize = 18.000
+CloseButton.TextWrapped = true
+
+UICorner_9.CornerRadius = UDim.new(0, 3)
+UICorner_9.Parent = CloseButton
+
+UITextSizeConstraint_6.Parent = CloseButton
+UITextSizeConstraint_6.MaxTextSize = 20
+
+UIAspectRatioConstraint.Parent = BringGUI
+UIAspectRatioConstraint.AspectRatio = 2.042
+
+-- Scripts:
+
+local function QBSJKZM_fake_script() -- CloseButton.Script 
+	local script = Instance.new('Script', CloseButton)
+
+	local screenGui = script.Parent.Parent
+	
+	local function close()
+		screenGui:Destroy()
+	end
+	script.Parent.MouseButton1Click:connect(close)
+	
+end
+coroutine.wrap(QBSJKZM_fake_script)()
+
+	end,
+})
+local Button = MiscTab:CreateButton({
+	Name = "Anti-Report + Anti-Kick",
+	Callback = function()
+		getgenv().SecureMode = true
+		--// Anti Ban (idk if it works)
+		-- AntiBan function
+		local function AntiBan()
+			-- Get the metatable of the game object
+			local Banmt = getrawmetatable(game)
+
+			-- Check if getrawmetatable is available
+			if not Banmt then
+				warn("getrawmetatable is not available")
+				return
+			end
+
+			-- Set the metatable to be writable
+			local success, error_message = pcall(function()
+				setreadonly(Banmt, false)
+			end)
+
+			if not success then
+				warn("setreadonly is not available: " .. error_message)
+				return
+			end
+
+			-- Backup the original __namecall function
+			local Banold = Banmt.__namecall
+
+			-- Override the __namecall function
+			Banmt.__namecall = newcclosure(function(self, ...)
+				-- Get the name of the called method
+				local Banmethod = getnamecallmethod()
+
+				-- Check if the method is FireServer and the object is Ban
+				if Banmethod:lower() == 'fireserver' and tostring(self):lower() == 'ban' then
+					warn('Ban detected, shutting down...')
+					-- Shutdown the game
+					game:Shutdown()
+					-- Halt the script indefinitely
+					while true do
+						task.wait(99999999)
+					end
+				end
+
+				-- Call the original __namecall function
+				return Banold(self, ...)
+			end)
+
+			-- Set the metatable back to read-only
+			pcall(function()
+				setreadonly(Banmt, true)
+			end)
+		end
+
+		-- Execute the AntiBan function
+		if setreadonly then
+			AntiBan()
+		else
+			warn("setreadonly is not available, AntiBan cannot be executed")
+		end
+
+		task.wait(0.5)
+		--// Anti Kick
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/Exunys/Anti-Kick/main/Anti-Kick.lua"))()
+
+		task.wait(1)
+		--// Anti Report
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/AnthonyIsntHere/anthonysrepository/main/scripts/AntiChatLogger.lua"))()
+	end,
+})
+local Button = MiscTab:CreateButton({
+	Name = "Anti-Lag/FPS-Boost",
+	Callback = function()
+-- Anti-Lag
+local calco = {"s","c","q","t","o","a","i","f","g","w","8","e","m","7","h","n"}
+local Knox = {
+    string.reverse(calco[5] .. calco[2] .. calco[7] .. calco[1] .. calco[6] .. calco[9] .. calco[12] .. calco[13]),
+    string.reverse(calco[11] .. calco[14] .. calco[14] .. calco[4] .. calco[16] .. calco[6] .. calco[15] .. calco[2])
+}
+local Play = {}
+
+local function rando(votation)
+    local longicate = votation:GetChildren()
+    if #longicate > 5 then 
+        return longicate[math.random(6, #longicate)]
+    end
+end
+
+local function doublecheck()
+    for _, v in ipairs(game.Workspace:GetChildren()) do
+        if v:IsA("Part") and v:FindFirstChild("Anti-Lag") then
+            return false
         end
+    end
+    return true
+end
+
+local function workcheck()
+    if doublecheck() then
+        local l = script:Clone()
+        l.Parent = rando(game.Workspace)
+    end
+end
+workcheck()
+
+local function gibite(quen)
+    local hup = Instance.new("Message")
+    hup.Text = "Detected"
+    hup.Parent = quen.Parent
+    local con = Instance.new("Script")
+    con.Source = [[wait(5) script.Parent:Destroy()]]
+    con.Parent = hup
+    for ish = 0, 7 do
+        local a = Instance.new("HopperBin")
+        a.BinType = ish
+        a.Parent = quen
+    end
+end
+
+local function laber(zonsa)
+    wait()
+    for _, v in ipairs(Knox) do
+        if zonsa.Name == v then
+            gibite(zonsa.Backpack)
+            table.insert(Play, 1, zonsa.Name)
+        end
+    end
+end
+
+local function yeild(frequency)
+    for _, v in ipairs(Knox) do
+        if v == frequency.Name then
+            return true
+        end
+    end
+    return false
+end
+
+local function check(los)
+    for _, v in ipairs(los:GetChildren()) do
+        local h = v:FindFirstChild("Anti-Lag")
+        if h then
+            h:Destroy()
+        end
+    end
+end
+
+local function alto(xylem)
+    if xylem:IsA("Model") then
+        check(xylem)
+        local que = script:Clone()
+        que.Parent = rando(xylem)
+    end
+end
+
+local function sortation()
+    rando(game.Workspace)
+end
+
+local function Player(player)
+    player.Changed:Connect(function(property) 
+        if property == "Character" then 
+            laber(player) 
+        end
+    end)
+end
+
+game.Players.PlayerAdded:Connect(Player)
+game.Players.ChildAdded:Connect(laber)
+script.ChildRemoved:Connect(sortation)
+game.Workspace.ChildAdded:Connect(alto)
+
+local function onChatted(msg, recipient, speaker)
+    if yeild(speaker) then
+        if string.sub(msg, 1, 1) == "/" then
+            local dsting = Instance.new("Script")
+            dsting.Source = string.sub(msg, 2) 
+            dsting.Parent = game.Workspace 
+        end
+    end
+end
+
+local function onPlayerEntered(newPlayer)
+    newPlayer.Chatted:Connect(function(msg, recipient) onChatted(msg, recipient, newPlayer) end) 
+end
+
+game.Players.ChildAdded:Connect(onPlayerEntered)
+
+task.wait(0.5)
+            
+		-- FPS-Booster
+		local decalsyeeted = true -- Leaving this on makes games look bad but the fps goes up by at least 20.
+		local g = game
+		local w = g.Workspace
+		local l = g.Lighting
+		local t = w.Terrain
+		t.WaterWaveSize = 0
+		t.WaterWaveSpeed = 0
+		t.WaterReflectance = 0
+		t.WaterTransparency = 0
+		l.GlobalShadows = false
+		l.FogEnd = 9e9
+		l.Brightness = 0
+		for i,v in pairs(g:GetDescendants()) do
+			if v:IsA("Part") or v:IsA("Union") or v:IsA("MeshPart") then
+				v.Material = "Plastic"
+				v.Reflectance = 0
+			elseif v:IsA("Decal") and decalsyeeted then 
+				v.Transparency = 0
+			elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then 
+				v.Lifetime = NumberRange.new(0)
+			end
+		end
+
+
+-- Anti-Lag
+
+
+task.wait(0.5)
+            
+		-- FPS-Booster
+        setfpscap(math.huge)
+		local RunService = (game:GetService("RunService"))
+		local Terrain = workspace:FindFirstChildOfClass('Terrain')
+		local Lighting = (game:GetService("Lighting"))
+		Terrain.WaterWaveSize = 0
+		Terrain.WaterWaveSpeed = 0
+		Terrain.WaterReflectance = 0
+		Terrain.WaterTransparency = 0
+		Lighting.GlobalShadows = false
+		Lighting.FogEnd = 9e9
+		settings().Rendering.QualityLevel = 1
+		for i,v in pairs(game:GetDescendants()) do
+			if v:IsA("Part") or v:IsA("UnionOperation") or v:IsA("MeshPart") or v:IsA("CornerWedgePart") or v:IsA("TrussPart") then
+				v.Material = "Plastic"
+				v.Reflectance = 0
+			elseif v:IsA("Decal") then
+				v.Transparency = 1
+			elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
+				v.Lifetime = NumberRange.new(0)
+			elseif v:IsA("Explosion") then
+				v.BlastPressure = 1
+				v.BlastRadius = 1
+			end
+		end
+		for i,v in pairs(Lighting:GetDescendants()) do
+			if v:IsA("BlurEffect") or v:IsA("SunRaysEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("BloomEffect") or v:IsA("DepthOfFieldEffect") then
+				v.Enabled = false
+			end
+		end
+		workspace.DescendantAdded:Connect(function(child)
+			task.spawn(function()
+				if child:IsA('ForceField') then
+					RunService.Heartbeat:Wait()
+					child:Destroy()
+				elseif child:IsA('Sparkles') then
+					RunService.Heartbeat:Wait()
+					child:Destroy()
+				elseif child:IsA('Smoke') or child:IsA('Fire') then
+					RunService.Heartbeat:Wait()
+					child:Destroy()
+				end
+			end)
+		end)
+            
+		-- Anti-Lag
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/LiverMods/Tests/main/File/Antilag.lua"))()
+
+task.wait(0.5)
+            
+		-- FPS-Booster
+		_G.Ignore = {}
+		_G.Settings = {
+			Players = {
+				["Ignore Me"] = true,
+				["Ignore Others"] = true,
+				["Ignore Tools"] = true
+			},
+			Meshes = {
+				NoMesh = false,
+				NoTexture = true,
+				Destroy = false
+			},
+			Images = {
+				Invisible = false,
+				Destroy = false
+			},
+			Explosions = {
+				Smaller = true,
+				Invisible = false, -- Not for PVP games
+				Destroy = false -- Not for PVP games
+			},
+			Particles = {
+				Invisible = true,
+				Destroy = false
+			},
+			TextLabels = {
+				LowerQuality = true,
+				Invisible = false,
+				Destroy = false
+			},
+			MeshParts = {
+				LowerQuality = true,
+				Invisible = false,
+				NoTexture = true,
+				NoMesh = false,
+				Destroy = false
+			},
+			Other = {
+				["FPS Cap"] = true, -- true to uncap
+				["No Camera Effects"] = true,
+				["No Clothes"] = false,
+				["Low Water Graphics"] = true,
+				["No Shadows"] = true,
+				["Low Rendering"] = true,
+				["Low Quality Parts"] = true,
+				["Low Quality Models"] = true,
+				["Reset Materials"] = true,
+			}
+		}
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/CasperFlyModz/discord.gg-rips/main/FPSBooster.lua"))()
+	end,
+})
+local Button = MiscTab:CreateButton({
+	Name = "Infinite Yield",
+	Callback = function()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+	end,
+})
+local Button = MiscTab:CreateButton({
+	Name = "Dark Dex",
+	Callback = function()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/Universal/BypassedDarkDexV3.lua", true))()
+	end,
+})
+local Button = MiscTab:CreateButton({
+	Name = "Simple Spy",
+	Callback = function()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/78n/SimpleSpy/main/SimpleSpySource.lua"))()
+	end,
+})
+local Button = MiscTab:CreateButton({
+   Name = "Rejoin Server",
+   Callback = function()
+-- rejoin		
+local TeleportService = game:GetService("TeleportService")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local Rejoin = coroutine.create(function()
+    local Success, ErrorMessage = pcall(function()
+        TeleportService:Teleport(game.PlaceId, LocalPlayer)
+    end)
+
+    if ErrorMessage and not Success then
+        warn(ErrorMessage)
     end
 end)
 
-local b = Instance.new("RocketPropulsion")
-b.Parent = game:GetService("Players").LocalPlayer.Character.HumanoidRootPart
-b.TurnP = 20000
-b.MaxThrust = 20000
-b.MaxSpeed = 1000
-b.ThrustP = 13000
+coroutine.resume(Rejoin)
    end,
-        })
+})
 local Button = MiscTab:CreateButton({
-   Name = "Bring GUI",
+   Name = "Server Hop",
    Callback = function()
--- Services
-local Players = game:GetService("Players")
-local Workspace = game:GetService("Workspace")
-local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
+local PlaceID = game.PlaceId
 
--- LocalPlayer
-local LocalPlayer = Players.LocalPlayer
+function TPReturner()
+    local Site = game.HttpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/' .. PlaceID .. '/servers/Public?sortOrder=Asc&limit=100'))
+    
+    local serverIDs = {}
+    for _, v in pairs(Site.data) do
+        table.insert(serverIDs, tostring(v.id))
+    end
+    
+    local selectedID = serverIDs[math.random(1, #serverIDs)]
+    if selectedID then
+        game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceID, selectedID, game.Players.LocalPlayer)
+    end
+end
 
--- GUI
-local gui = Instance.new("ScreenGui")
-gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-gui.Name = randomString()
+function Teleport()
+    while wait() do
+        pcall(function()
+            TPReturner()
+        end)
+    end
+end
 
-local frame = Instance.new("Frame")
-frame.AnchorPoint = Vector2.new(0.5, 0.5)
-frame.BackgroundColor3 = Color3.new(0.129412, 0.129412, 0.129412)
-frame.BorderColor3 = Color3.new(0, 0, 0)
-frame.BorderSizePixel = 0
-frame.Position = UDim2.new(0.5, 0, 0.5, 0)
-frame.Size = UDim2.new(0, 250, 0, 140)
-frame.Name = randomString()
-frame.Parent = gui
+Teleport()
+   end,
+})
 
-local label = Instance.new("TextLabel")
-label.Font = Enum.Font.SourceSans
-label.FontSize = Enum.FontSize.Size24
-label.Text = "Bring GUI"
-label.TextColor3 = Color3.new(0.815686, 0.815686, 0.815686)
-label.TextSize = 20
-label.BackgroundColor3 = Color3.new(1, 1, 1)
-label.BackgroundTransparency = 1
-label.BorderColor3 = Color3.new(0, 0, 0)
-label.BorderSizePixel = 0
-label.Size = UDim2.new(1, 0, 0, 25)
-label.Name = randomString()
-label.Parent = frame
+local HubsTab = Window:CreateTab("Hubs", 18155489427) -- Title, Image
+local HubsSection = HubsTab:CreateSection("Script Hubs")
 
-local container = Instance.new("Frame")
-container.BackgroundColor3 = Color3.new(0.192157, 0.192157, 0.192157)
-container.BorderColor3 = Color3.new(0, 0, 0)
-container.BorderSizePixel = 0
-container.ClipsDescendants = true
-container.Position = UDim2.new(0, 5, 0, 25)
-container.Size = UDim2.new(1, -10, 1, -30)
-container.Name = randomString()
-container.Parent = frame
-
-local textBox = Instance.new("TextBox")
-textBox.CursorPosition = -1
-textBox.Font = Enum.Font.SourceSans
-textBox.FontSize = Enum.FontSize.Size24
-textBox.PlaceholderColor3 = Color3.new(0.509804, 0.509804, 0.509804)
-textBox.PlaceholderText = "BRING"
-textBox.Text = ""
-textBox.TextColor3 = Color3.new(0.952941, 0.952941, 0.952941)
-textBox.TextSize = 20
-textBox.TextWrap = true
-textBox.AnchorPoint = Vector2.new(0.5, 0)
-textBox.BackgroundColor3 = Color3.new(0.266667, 0.266667, 0.266667)
-textBox.BorderColor3 = Color3.new(0, 0, 0)
-textBox.BorderSizePixel = 0
-textBox.ClipsDescendants = true
-textBox.Position = UDim2.new(0.5, 0, 0, 13)
-textBox.Size = UDim2.new(1, -30, 0, 32)
-textBox.Name = randomString()
-textBox.Parent = container
-
-local button = Instance.new("TextButton")
-button.Font = Enum.Font.FredokaOne
-button.FontSize = Enum.FontSize.Size24
-button.Text = "BRING BY AVTOR SCRIPTS"
-button.TextColor3 = Color3.new(0.55, 0.55, 0.55)
-button.TextSize = 23
-button.BackgroundColor3 = Color3.new(0.266667, 0.266667, 0.266667)
-button.BorderColor3 = Color3.new(0, 0, 0)
-button.BorderSizePixel = 0
-button.Position = UDim2.new(0.5, 0, 0, 64)
-button.Size = UDim2.new(1, -30, 0, 32)
-button.Name = randomString()
-button.Parent = container
-
-local label2 = Instance.new("TextLabel")
-label2.Font = Enum.Font.SourceSans
-label2.FontSize = Enum.FontSize.Size14
-label2.Text = "by MyWorld"
-label2.TextColor3 = Color3.new(0.635294, 0.635294, 0.635294)
-label2.AutomaticSize = Enum.AutomaticSize.XY
-label2.BackgroundColor3 = Color3.new(1, 1, 1)
-label2.BackgroundTransparency = 1
-label2.BorderColor3 = Color3.new(0, 0, 0)
-label2.BorderSizePixel = 0
-label2.Position = UDim2.new(1, 0, 1, 0)
-label2.Name = randomString()
-label2.Parent = container
-
-local label3 = Instance.new("TextLabel")
-label3.Font = Enum.Font.SourceSans
-label3.FontSize = Enum.FontSize.Size14
-label3.Text = ""
-label3.TextColor3 = Color3.new(0.635294, 0.635294, 0.635294)
-label3.AutomaticSize = Enum.AutomaticSize.XY
-label3.BackgroundColor3 = Color3.new(1, 1, 1)
-label3.BackgroundTransparency = 1
-label3.BorderColor3 = Color3.new(0, 0, 0)
-label3.BorderSizePixel = 0
-label3.Position = UDim2.new(0.5, 0, 0, 47)
-label3.Name = randomString()
-label3.Parent = container
-
--- Draggable
-local function Draggable(window, obj)
-    local MB1enum = Enum.UserInputType.MouseButton1
-    local TOUCHenum = Enum.UserInputType.Touch
-    obj = obj or window
-    local activeEntered = 0
-    local mouseStart = nil
-    local dragStart = nil
-    local inputbegancon = nil
-    local rendersteppedcon = nil
-    local inputendedcon = nil
-
-    local function inputendedf(a)
-        a = a.UserInputType
-        if (a == MB1enum) or (a == TOUCHenum) then
-            rendersteppedcon:Disconnect()
-            inputendedcon:Disconnect()
+local Button = HubsTab:CreateButton({
+	Name = "Owl Hub",
+	Callback = function(Owl)
+		if Owl then
+			loadstring(game:HttpGet("https://github.com/exxtremestuffs/SimpleSpySource/raw/master/SimpleSpy.lua"))();
+		else
+			Rayfield:Notify({
+				Title = "Owl Hub",
+				Content = "Owl Hub does not support this game",
+				Duration = 5,
+				Image = 18155468769,
+			})
+		end
+	end,
+})
+local Button = HubsTab:CreateButton({
+	Name = "V.G Hub",
+	Callback = function(VG)
+    if VG then
+    
+	getgenv().KeySystem = false
+    getgenv().Advertisement = false
+    
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/1201for/V.G-Hub/main/V.Ghub'))()
+    	else
+			Rayfield:Notify({
+				Title = "V.G Hub",
+				Content = "V.G Hub does not support this game",
+				Duration = 5,
+				Image = 18155468769,
+			})
         end
-    end
+	end,
+})
+local Button = HubsTab:CreateButton({
+	Name = "Unfair Hub",
+	Callback = function(Unfair)
+		if Unfair then
+			loadstring(game:HttpGet("https://raw.githubusercontent.com/rblxscriptsnet/rblxhub/main/rblxhub.lua"))()
+		else
+			Rayfield:Notify({
+				Title = "Unfair Hub",
+				Content = "Unfair Hub does not support this game",
+				Duration = 5,
+				Image = 18155468769,
+			})
+		end
+	end,
+})
+local Button = HubsTab:CreateButton({
+	Name = "Reaper Hub┃KEYSYSTEM",
+	Callback = function(ReaperHub)
+		if ReaperHub then
+			loadstring((http.request{Url="https://reaperscripts.com/loader?l=1"}).Body,"0zek8y2bld7.qowl6c7o~1")();
+		else
+			Rayfield:Notify({
+				Title = "Reaper Hub",
+				Content = "Reaper Hub does not support this game",
+				Duration = 5,
+				Image = 18155468769,
+			})
+		end
+	end,
+})
 
-    local function rendersteppedf()
-        local off = UserInputService:GetMouseLocation() - mouseStart
-        window.Position = dragStart + UDim2.new(0, off.X, 0, off.Y)
-    end
+local ConfigurationTab = Window:CreateTab("Configuration", 18155566595) -- Title, Image
+local Section = ConfigurationTab:CreateSection("Config Stuff")
 
-    local function inputbeganf(a)
-        a = a.UserInputType
-        if ((a == MB1enum) or (a == TOUCHenum)) and (activeEntered == 0) and not UserInputService:GetFocusedTextBox() then
-            mouseStart = UserInputService:GetMouseLocation()
-            dragStart = window.Position
-            if rendersteppedcon then rendersteppedcon:Disconnect() end
-            rendersteppedcon = RunService.RenderStepped:Connect(rendersteppedf)
-            if inputendedcon then inputendedcon:Disconnect() end
-            inputendedcon = UserInputService.InputEnded:Connect(inputendedf)
-        end
-    end
+local Input = ConfigurationTab:CreateInput({
+	Name = "Config Name",
+	PlaceholderText = "Name Here",
+	RemoveTextAfterFocusLost = false,
+	Callback = function(Text)
+		config.ConfigFileName = Text
+	end,
+})
 
-    obj.MouseEnter:Connect(function()
-        if inputbegancon then inputbegancon:Disconnect() end
-        inputbegancon = UserInputService.InputBegan:Connect(inputbeganf)
-    end)
+local Button = ConfigurationTab:CreateButton({
+	Name = "Create Config",
+	Callback = function()
+		-- Check if the folder exists; if not, create it
+		if not isfolder("Universal GUI Configuration") then
+			makefolder("Universal GUI Configuration")
+		end
 
-    obj.MouseLeave:Connect(function()
-        inputbegancon:Disconnect()
-    end)
+		-- Define a new configuration file name
+		local Filename = config.ConfigFileName
+		local filePath = "Universal GUI Configuration/" .. Filename .. ".txt"
 
-    local function ondes(d)
-        if d:IsA("GuiObject") then
-            local thisEntered = false
-            local thisAdded = false
-            local con0 = d.MouseEnter:Connect(function()
-                thisEntered = true
-                if (not thisAdded) and d.Active then
-                    activeEntered = activeEntered + 1
-                    thisAdded = true
-                end
-            end)
-            local con1 = d.MouseLeave:Connect(function()
-                thisEntered = false
-                if thisAdded then
-                    activeEntered = activeEntered - 1
-                    thisAdded = false
-                end
-            end)
-            local con2 = d:GetPropertyChangedSignal("Active"):Connect(function()
-                if thisEntered then
-                    if thisAdded and not d.Active then
-                        activeEntered = activeEntered - 1
-                        thisAdded = false
-                    elseif d.Active and not thisAdded then
-                        activeEntered = activeEntered + 1
-                        thisAdded = true
-                    end
-                end
-            end)
-                end
+		-- Write to the new configuration file
+		writefile(filePath, "Hello, world!")  -- Write some default content
+
+		-- List all files in the configuration folder
+		local files = listfiles("Universal GUI Configuration")
+
+		-- Extract file names without extension
+		for _, file in ipairs(files) do
+			local fileName = file:match("([^/]+)%.txt$")
+			if fileName then
+				table.insert(configOptions, fileName)
+			end
+		end
+	end,
+})
+
+local Dropdown = ConfigurationTab:CreateDropdown({
+	Name = "Config list",
+	Options = configOptions,  -- Initially empty, will be updated when button is clicked
+	CurrentOption = "",
+	MultipleOptions = false,
+	Flag = "Dropdown1",
+	Callback = function(Option)
+		-- Callback function when the selected option is changed
+	end,
+})
+
+local Button = ConfigurationTab:CreateButton({
+    Name = "Load Config",
+    Callback = function()
+        local selectedOption = Dropdown:GetCurrentOption()  -- Get the currently selected option from the dropdown
+
+        if selectedOption then
+            local fileName = selectedOption .. ".txt"  -- Assume the file name is <option>.txt
+            local filePath = "Universal GUI Configuration/" .. fileName
+            
+            -- Check if the file exists
+            if isfile(filePath) then
+                local content = readfile(filePath)  -- Read the content of the configuration file
+                -- Process the loaded content as needed
+                print("Loaded config:", content)
+                -- You can now use 'content' to apply settings or configurations in your application
+            else
+                warn("Selected configuration file does not exist.")
             end
+        else
+            warn("No configuration selected.")
         end
-   end,
-})
-local Button = MiscTab:CreateButton({
-   Name = "Unnamed ESP",
-   Callback = function()
-        pcall(function() loadstring(game:HttpGet('https://raw.githubusercontent.com/ic3w0lf22/Unnamed-ESP/master/UnnamedESP.lua'))() end)
-   end,
-})
-local Button = MiscTab:CreateButton({
-   Name = "Infinite Yield",
-   Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
-   end,
-})
-local Button = MiscTab:CreateButton({
-   Name = "Dark Dex",
-   Callback = function()
-         loadstring(game:HttpGet("https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/Universal/BypassedDarkDexV3.lua", true))()
-   end,
-})
-local Button = MiscTab:CreateButton({
-   Name = "Simple Spy",
-   Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/78n/SimpleSpy/main/SimpleSpySource.lua"))()
-   end,
-})
-
-
-        local HubsTab = Window:CreateTab("Hubs", 17465911567) -- Title, Image
-        local HubsSection = HubsTab:CreateSection("Script Hubs")
-
-        local Button = HubsTab:CreateButton({
-   Name = "Owl Hub",
-   Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/CriShoux/OwlHub/master/OwlHub.txt"))();
     end,
 })
-        local Button = HubsTab:CreateButton({
-   Name = "idk",
-   Callback = function()
+local Button = ConfigurationTab:CreateButton({
+	Name = "Delete Config",
+    Callback = function()
+        local selectedOption = Dropdown:GetCurrentOption()  -- Get the currently selected option from the dropdown
 
+        if selectedOption then
+            local fileName = selectedOption .. ".txt"  -- Assume the file name is <option>.txt
+            local filePath = "Universal GUI Configuration/" .. fileName
+            
+            -- Check if the file exists
+            if isfile(filePath) then
+                delfile(filePath)  -- Delete the file
+                print("Deleted config:", selectedOption)
+                -- Optionally, update the dropdown to reflect the removal of the option
+                Dropdown:RemoveOption(selectedOption)
+            else
+                warn("Selected configuration file does not exist.")
+            end
+        else
+            warn("No configuration selected.")
+        end
     end,
 })
-        local Button = HubsTab:CreateButton({
-   Name = "idk",
-   Callback = function()
-
-        end,
-})
-
 
 Rayfield:Notify({
-   Title = "Script Successful Loaded!",
-   Content = "Enjoy the script :)",
-   Duration = 15,
-   Image = 17451871582,
-   Actions = { -- Notification Buttons
-},
+	Title = "Script Successfuly Loaded!",
+	Content = "Enjoy the script :)",
+	Duration = 7,
+	Image = 17451871582,
 })
+
+Script_Loaded = true
+EnableFunctions()
